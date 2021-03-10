@@ -55,10 +55,10 @@ author:
       - 
         ins: A. Gurtov
         name: Andrei Gurtov
-        org: Linköping University
+        org: LinkÃ¶ping University
         street: IDA
-        city: Linköping
-        code: SE-58183 Linköping
+        city: LinkÃ¶ping
+        code: SE-58183 LinkÃ¶ping
         country: Sweden
         email: gurtov@acm.org
 normative:
@@ -177,7 +177,7 @@ architectural building blocks and their interfaces.
 
 --- middle
 
-# Introduction #        {#introduction}
+# Introduction # {#introduction}
 
 This document describes an architecture for protocols and services to
 support Unmanned Aircraft System Remote Identification and tracking
