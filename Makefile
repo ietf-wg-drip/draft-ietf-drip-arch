@@ -1,25 +1,11 @@
-DRAFT:=arch
-VERSION:=$(shell ./getver ${DRAFT}.mkd )
-EXAMPLES=
-OPEN=$(word 1, $(wildcard /usr/bin/xdg-open /usr/bin/open /bin/echo))
+LIBDIR := lib
+include $(LIBDIR)/main.mk
 
-${DRAFT}-${VERSION}.txt: ${DRAFT}.txt
-	cp ${DRAFT}.txt ${DRAFT}-${VERSION}.txt
-
-%.xml: %.mkd
-	kramdown-rfc2629 ${DRAFT}.mkd > ${DRAFT}.xml
-	xml2rfc --v2v3 ${DRAFT}.xml
-	mv ${DRAFT}.v2v3.xml ${DRAFT}.xml
-	xml2rfc --v3 --html ${DRAFT}.xml
-	$(OPEN) ${DRAFT}.html
-
-%.txt: %.xml
-	xml2rfc --text -o $@ $?
-
-version:
-	echo Version: ${VERSION}
-
-clean:
-	rm -f ${DRAFT}.xml ${DRAFT}.txt ${DRAFT}.html ${DRAFT}-${VERSION}.txt
-
-.PRECIOUS: ${DRAFT}.xml
+$(LIBDIR)/main.mk:
+ifneq (,$(shell grep "path *= *$(LIBDIR)" .gitmodules 2>/dev/null))
+	git submodule sync
+	git submodule update $(CLONE_ARGS) --init
+else
+	git clone -q --depth 10 $(CLONE_ARGS) \
+	    -b main https://github.com/martinthomson/i-d-template $(LIBDIR)
+endif

@@ -1,12 +1,12 @@
 # DRIP Architecture
 
-This is the working area for the IETF [DRIP Working Group](https://datatracker.ietf.org/wg/drip/documents/) Internet-Draft, "DRIP Architecture".
-
-* [Working Group Draft](https://tools.ietf.org/html/draft-ietf-drip-arch/)
+* [Editor's Copy](https://ietf-wg-drip.github.io/draft-ietf-drip-arch/#go.draft-ietf-drip-arch.html)
+* [Working Group Draft](https://tools.ietf.org/html/draft-ietf-drip-arch)
+* [Compare Editor's Copy to Working Group Draft](https://ietf-wg-drip.github.io/draft-ietf-drip-arch/#go.draft-ietf-drip-arch.diff)
 
 ## Building the Draft
 
-Formatted text, XML and HTML versions of the draft can be built using `make`.
+Formatted text and HTML versions of the draft can be built using `make`.
 
 ```sh
 $ make
