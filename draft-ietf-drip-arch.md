@@ -12,7 +12,7 @@ wg: drip
 kw: Internet-Draft
 cat: info
 
-coding: ascii
+coding: utf-8
 pi: [toc, sortrefs, symrefs]
 
 author:
