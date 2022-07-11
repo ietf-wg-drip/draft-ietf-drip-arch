@@ -375,14 +375,14 @@ as context, some entities and interfaces beyond the scope of DRIP (as currently 
 * +-----+     * Registration *          * Registration *     +-----+ *
 *             * (and UTM)    *          * (and UTM)    *             *
 ***************              ************              ***************
-                               |  |  |
-                +----------+   |  |  |   +----------+
-                | Public   o---'  |  '---o Private  |
-                | Registry |      |      | Registry |
-                +----------+      |      +----------+
-                               +--o--+
-                               | DNS |
-                               +-----+
+                               | |  | |
+        +------------------+   | |  | |   +-----------------------+
+        | Public/Private   o---' |  | '---o UTM Supplemental Data |
+        | Registry         |     |  |     | Service Provider      |
+        +------------------+     |  |     +-----------------------+
+                     +-----+     |  |     +---------+
+                     | DNS o-----'  '-----o UTM USS |
+                     +-----+              +---------+
 
 DAA:  Detect And Avoid
 GPOD: General Public Observer Device
