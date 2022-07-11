@@ -564,7 +564,7 @@ Further, gateways with additional sensors (e.g., smartphones with cameras) can p
 
 {{csridfinder}} and {{csridsdsp}} define two additional entities that are required to provide this Crowd Sourced Remote ID (CS-RID).
 
-This approach satisfies the following DRIP requirements defined in {{RFC9153}}: GEN-5, GEN-11, and REG-1. As Broadcase messages are inherently multicast, GEN-10 is met for local-link multicast to multiple Finders (how multilateration is possible).
+This approach satisfies the following DRIP requirements defined in {{RFC9153}}: GEN-5, GEN-11, and REG-1. As Broadcast messages are inherently multicast, GEN-10 is met for local-link multicast to multiple Finders (how multilateration is possible).
 
 
 ## The CS-RID Finder ## {#csridfinder}
@@ -594,7 +594,7 @@ Compromise of a registry private key could do widespread harm. Key revocation pr
 
 The security provided by asymmetric cryptographic techniques depends upon protection of the private keys. It may be necessary for the GCS to have the key pair to register the HHIT to the USS. Thus it may be the GCS that generates the key pair and delivers it to the UA, making the GCS a part of the key security boundary. Leakage of the private key either from the UA or GCS to the component manufacturer is a valid concern and steps need to be in place to ensure safe keeping of the private key.
 
-Since it is possible for the UAS RID sender of a small harmless UA (or the entire UA) to be carried by a larger dangerous UA as a "false flag", it is out of scope to deal wtih secure store for the private key.
+Since it is possible for the UAS RID sender of a small harmless UA (or the entire UA) to be carried by a larger dangerous UA as a "false flag", it is out of scope to deal with secure store for the private key.
 
 ## Post Quantum Computing Out Of Scope ##
 
