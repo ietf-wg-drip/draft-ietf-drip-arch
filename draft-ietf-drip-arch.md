@@ -1,8 +1,8 @@
 ---
 title: Drone Remote Identification Protocol (DRIP) Architecture
 abbrev: DRIP Architecture 
-docname: draft-ietf-drip-arch-24
-date: 2022-06-10
+docname: draft-ietf-drip-arch-26
+date: 2022-08-01
 
 stand_alone: true
 
@@ -46,10 +46,10 @@ author:
       - 
         ins: S. Zhao (Editor)
         name: Shuai Zhao
-        org: Tencent
-        street: 2747 Park Blvd
-        city: Palo Alto
-        code: 94588
+        org: Intel
+        street: 2200 Mission College Blvd
+        city: Santa Clara
+        code: 95054
         country: USA
         email: shuai.zhao@ieee.org
       - 
@@ -71,17 +71,25 @@ normative:
   
 
 informative:
+  I-D.ietf-rats-architecture: rats-arch
   I-D.ietf-drip-auth: drip-authentication
   RFC7480:
   RFC8032:
   RFC9082:
-  F3411:
+  F3411-19:
     title: Standard Specification for Remote ID and Tracking
     author:
       -
         org: ASTM International
     target: http://www.astm.org/cgi-bin/resolver.cgi?F3411
     date: February 2020
+  F3411-22a:
+    title: Standard Specification for Remote ID and Tracking
+    author:
+      -
+        org: ASTM International
+    target: https://www.astm.org/f3411-22a.html
+    date: July 2022
 
   CTA2063A:
     title: Small Unmanned Aerial Systems Serial Numbers
@@ -140,6 +148,22 @@ informative:
       -
         org: 3GPP
     target: https://portal.3gpp.org/desktopmodules/Specifications/SpecificationDetails.aspx?specificationId=3527
+    date: 2018
+  TR-23.755: 
+    title: Study on application layer support for Unmanned Aerial Systems (UAS) (Release 17)
+    author: 
+      -
+        org: 3GPP
+    target: https://portal.3gpp.org/desktopmodules/Specifications/SpecificationDetails.aspx?specificationId=3588
+    date: 2019
+  TS-23.255: 
+    title: Application layer support for Uncrewed Aerial System (UAS) Functional architecture and information flows; (Release 17)
+    author: 
+      -
+        org: 3GPP
+    target: https://portal.3gpp.org/desktopmodules/Specifications/SpecificationDetails.aspx?specificationId=3843
+    date: 2020
+
   U-Space:
     title:  U-space Concept of Operations
     author:
@@ -174,123 +198,111 @@ informative:
   
   RFC7033:
   RFC7401:
-  RFC7484:
+  RFC9224:
   RFC8004:
-  RFC5731:
   RFC1034:
   RFC5730:
   RFC3972:
-  RFC8949:
-  RFC7519:
-  RFC8392:
   RFC8005:
   RFC9083:
   RFC3261:
   I-D.ietf-drip-registries:
 
-  # I-D.ietf-drip-rid: drip-uas-rid
+  I-D.ietf-drip-rid:
 
 --- abstract
 
 This document describes an architecture for protocols and services to
-support Unmanned Aircraft System (UAS) Remote Identification (RID) and tracking, plus UAS RID-related communications. This architecture adheres to the requirements listed in the DRIP Requirements document (RFC 9153).
+support Unmanned Aircraft System (UAS) Remote Identification (RID) and tracking, plus UAS RID-related communications. This architecture adheres to the requirements listed in the DRIP Requirements document (RFC9153).
 
 --- middle
 
 # Introduction #        {#introduction}
 
 This document describes an architecture for protocols and services to
-support Unmanned Aircraft System (UAS) Remote Identification (RID) and tracking, plus RID-related communications. The architecture takes into account both current (including proposed in 2022) regulations and non-IETF technical standards.
+support Unmanned Aircraft System (UAS) Remote Identification (RID) and tracking, plus RID-related communications. The architecture takes into account both current (including proposed) regulations and non-IETF technical standards.
 
-The architecture adheres to the requirements listed in the DRIP Requirements document {{RFC9153}}. The requirements document provides an extended introduction to the problem space and use cases.
+The architecture adheres to the requirements listed in the DRIP Requirements document {{RFC9153}}. The requirements document provides an extended introduction to the problem space and use cases. Further, this architecture document frames the DRIP Entity Tag (DET) {{I-D.ietf-drip-rid}} within the architecture.
 
 ## Overview of Unmanned Aircraft System (UAS) Remote ID (RID) and Standardization ## 
 
-UAS Remote Identification (RID) is an application that enables a UAS to be identified by Unmanned Aircraft Systems Traffic Management (UTM) and UAS Service Supplier (USS) ({{appendix-a}}) or third party entities such as law enforcement. Many considerations (e.g., safety) dictate that UAS be remotely identifiable.  
+UAS Remote Identification (RID) is an application that enables a UAS to be identified by Unmanned Aircraft Systems Traffic Management (UTM) and UAS Service Supplier (USS) ({{appendix-a}}) or third party entities such as law enforcement. Many considerations (e.g., safety) dictate that a UAS be remotely identifiable.  
 
 Civil Aviation Authorities (CAAs) worldwide are mandating UAS RID. CAAs currently promulgate performance-based regulations that do not specify techniques, but rather cite industry consensus technical standards as acceptable means of compliance. 
 
 USA Federal Aviation Administration (FAA)
 
-> The FAA published a Notice of Proposed Rule Making {{NPRM}} in 2019  and thereafter published a "Final Rule" in 2021 {{FAA_RID}}, imposing requirements on UAS manufacturers and operators, both commercial and recreational. The rule clearly states that Automatic Dependent Surveillance Broadcast (ADS-B) Out and transponders cannot be used to satisfy the UAS RID requirements on UAS to which the rule applies (see {{adsb}}).
+> The FAA published a Notice of Proposed Rule Making {{NPRM}} in 2019  and thereafter published a "Final Rule" in 2021 {{FAA_RID}}, imposing requirements on UAS manufacturers and operators, both commercial and recreational. The rule  states that Automatic Dependent Surveillance Broadcast (ADS-B) Out and transponders cannot be used to satisfy the UAS RID requirements on UAS to which the rule applies (see {{adsb}}).
 
 European Union Aviation Safety Agency (EASA)
 
-> The EASA published a {{Delegated}} regulation in 2019 imposing requirements on UAS manufacturers and third-country operators, including but not limited to UAS RID requirements. The same year, EASA also published an {{Implementing}} regulation laying down detailed rules and procedures for UAS operations and operating personnel then was updated in 2021 {{Implementing_update}}. A Notice of Proposed Amendment {{NPA}} was published in 2021 to provide more information about the development of acceptable means of compliance and guidance material to support the U-space regulation.
+> The EASA published a {{Delegated}} regulation in 2019 imposing requirements on UAS manufacturers and third-country operators, including but not limited to UAS RID requirements. The same year, EASA also published an {{Implementing}} regulation laying down detailed rules and procedures for UAS operations and operating personnel which then was updated in 2021 {{Implementing_update}}. A Notice of Proposed Amendment {{NPA}} was published in 2021 to provide more information about the development of acceptable means of compliance and guidance material to support the U-space regulation.
 
  American Society for Testing and Materials (ASTM)
 
-> ASTM International, Technical Committee F38 (UAS), Subcommittee F38.02 (Aircraft Operations), Work Item WK65041, developed the ASTM {{F3411}} Standard Specification for Remote ID and Tracking.
+> ASTM International, Technical Committee F38 (UAS), Subcommittee F38.02 (Aircraft Operations), Work Item WK65041, developed the ASTM {{F3411-19}} Standard Specification for Remote ID and Tracking.
 
 > ASTM defines one set of UAS RID information and two means, MAC-layer
 broadcast and IP-layer network, of communicating it.  If an UAS uses 
 both communication methods, the same information must be
-provided via both means. {{F3411}} is cited by the FAA in its UAS RID final rule
-{{FAA_RID}} as "a potential means of compliance" to a Remote ID rule.
+provided via both means. {{F3411-19}} is cited by the FAA in its UAS RID final rule {{FAA_RID}} as "a potential means of compliance" to a Remote ID rule.
 
 
 The 3rd Generation Partnership Project (3GPP)
 
-> With release 16, the 3GPP completed the UAS RID requirement study {{TS-22.825}} and proposed a set of use cases in the mobile network and services that can be offered based on UAS RID.  Release 17 specification focuses on enhanced UAS service requirements and provides the protocol and application architecture support that will be applicable for both 4G and 5G networks.
-The study of Further Architecture Enhancement for Uncrewed Aerial Vehicles (UAV) and Urban Air Mobility (UAM) {{FS_AEUA}} in release 18 further enhances the communication mechanism between UAS and USS/UTM. The DRIP Entity Tag in {{rid}} can be a candidate to provide the so-called 3GPP CAA-level UAS ID for Remote Identification purposes.
+> With release 16, the 3GPP completed the UAS RID requirement study {{TS-22.825}} and proposed a set of use cases in the mobile network and services that can be offered based on UAS RID.  The Release 17 study {{TR-23.755}} and specification {{TS-23.255}} focus on enhanced UAS service requirements and provides the protocol and application architecture support that will be applicable for both 4G and 5G networks. The study of Further Architecture Enhancement for Uncrewed Aerial Vehicles (UAV) and Urban Air Mobility (UAM) {{FS_AEUA}} in release 18 further enhances the communication mechanism between UAS and USS/UTM. The DRIP Entity Tag in {{rid}} may be used as the 3GPP CAA-level UAS ID for Remote Identification purposes.
 
 ## Overview of Types of UAS Remote ID ## 
 
-This specification introduces two types of UAS Remote ID defined in ASTM {{F3411}}.
+This specification introduces two types of UAS Remote ID defined in ASTM {{F3411-19}}. 
 
 ### Broadcast RID ### {#brid}
 
-{{F3411}} defines a set of UAS RID messages for direct, one-way, broadcast
+{{F3411-19}} defines a set of UAS RID messages for direct, one-way, broadcast
 transmissions from the UA over Bluetooth or Wi-Fi.  These are currently defined as MAC-Layer messages. Internet (or other Wide Area Network) connectivity is only needed for UAS registry information lookup by Observers using the directly received UAS ID.  Broadcast RID should be functionally usable in situations with no Internet connectivity.
 
 The minimum Broadcast RID data flow is illustrated in {{brid-fig}}.
 
 ~~~
-            +------------------------+
-            | Unmanned Aircraft (UA) |
-            +-----------o------------+
-                        |
-                        |
-                        |
-                        | app messages directly over 
-                        | one-way RF data link (no IP)
-                        |
-                        |
-                        v
-      +------------------o-------------------+
-      | Observer's device (e.g., smartphone) |
-      +--------------------------------------+
+                +------------------------+
+                | Unmanned Aircraft (UA) |
+                +-----------o------------+
+                            |
+                            | app messages directly over 
+                            | one-way RF data link (no IP)
+                            |
+                            v
+          +------------------o-------------------+
+          | Observer's device (e.g., smartphone) |
+          +--------------------------------------+
 ~~~
 {: #brid-fig}
 Broadcast RID provides information only about unmanned aircraft (UA) within direct Radio Frequency (RF) Line-Of-Sight (LOS), typically similar to Visual LOS (VLOS), with a range up to approximately 1 km.  This information may be 'harvested' from received broadcasts and made available via the Internet, enabling surveillance of areas too large for local direct visual observation or direct RF link-based ID (see {{harvestbridforutm}}).
 
-### Network RID (Net-RID) ### {#nrid}
+### Network RID ### {#nrid}
 
-{{F3411}}, using the same data dictionary that is the basis of Broadcast RID messages, defines a Network Remote Identification (Net-RID) data flow as follows.
+{{F3411-19}}, using the same data dictionary that is the basis of Broadcast RID messages, defines a Network Remote Identification (Net-RID) data flow as follows.
 
-* The information to be reported via UAS RID is generated by the UAS. Typically some of this data is generated by the UA and some by the Ground Control Station (GCS), e.g., their respective Global Navigation Satellite System (GNSS) derived locations.
+* The information to be reported via UAS RID is generated by the UAS. Typically some of this data is generated by the UA and some by the GCS (Ground Control Station), e.g., their respective Global Navigation Satellite System (GNSS) derived locations.
 
 * The information is sent by the UAS (UA or GCS) via unspecified means to the cognizant Network Remote Identification Service Provider (Net-RID SP), typically the USS under which the UAS is operating if participating in UTM.
 
-* The Net-RID SP publishes via the Discovery and Synchronization Service (DSS) over the Internet that it has operations in various 4-D airspace volumes (Section 2.2 of {{RFC9153}}), describing the volumes but not the operations.
+* The Net-RID SP publishes via the Discovery and Synchronization Service (DSS) over the Internet that it has operations in various 4-D airspace volumes (Section 2.2 of {{RFC9153}}),
+describing the volumes but not the operations.
 
 * An Observer's device, which is expected, but not specified, to be web-based, queries a Network Remote Identification Display Provider (Net-RID DP),
 typically also a USS, about any operations in a specific 4-D airspace volume.
 
-* Using fully specified web-based methods over the Internet, the Net-RID DP queries all Net-RID SP that have operations in volumes intersecting that
-of the Observer's query for details on all such operations.
+* Using fully specified web-based methods over the Internet, the Net-RID DP queries all Net-RID SPs that have operations in volumes intersecting that of the Observer's query for details on all such operations.
 
-* The Net-RID DP aggregates information received from all such Net-RID SP and responds to the Observer's query.
-
+* The Net-RID DP aggregates information received from all such Net-RID SPs and responds to the Observer's query.
 
 The minimum Net-RID data flow is illustrated in {{nrid-fig}}:
 
 ~~~
-
  +-------------+     ******************
  |     UA      |     *    Internet    *
  +--o-------o--+     *                *
-    |       |        *                *
     |       |        *                *     +------------+
     |       '--------*--(+)-----------*-----o            |
     |                *   |            *     |            |
@@ -309,21 +321,20 @@ The minimum Net-RID data flow is illustrated in {{nrid-fig}}:
  +--o-------o--+     *         '------*-----o Observer's |
  |     GCS     |     *                *     | Device     |
  +-------------+     ******************     +------------+
-
 ~~~
 {: #nrid-fig}
 
 Command and Control (C2) must flow from the GCS to the UA via some path. Currently (in the year 2022)  this is typically a direct RF link; however, with increasing Beyond Visual Line of Sight (BVLOS) operations, it is expected often to be a wireless link at either end with the Internet between. 
 
-Telemetry (at least UA's position and heading) flows from the UA to the GCS via some path, typically the reverse of the C2 path. Thus, UAS RID information pertaining to both the GCS and the UA can be sent, by whichever has Internet connectivity, to the Net-RID SP, typically the USS managing the UAS operation.
+Telemetry (at least the UA's position and heading) flows from the UA to the GCS via some path, typically the reverse of the C2 path. Thus, UAS RID information pertaining to both the GCS and the UA can be sent, by whichever has Internet connectivity, to the Net-RID SP, typically the USS managing the UAS operation.
 
-The Net-RID SP forwards UAS RID information via the Internet to subscribed Net-RID DPs, typically USS. Subscribed Net-RID DPs then forward RID information via the Internet to subscribed Observer devices. Regulations require and {{F3411}} describes UAS RID data elements that must be transported end-to-end from the UAS to the subscribed Observer devices.
+The Net-RID SP forwards UAS RID information via the Internet to subscribed Net-RID DPs, typically USSs. Subscribed Net-RID DPs then forward RID information via the Internet to subscribed Observer devices. Regulations require and {{F3411-19}} describes UAS RID data elements that must be transported end-to-end from the UAS to the subscribed Observer devices.
 
-{{F3411}} prescribes the protocols between the Net-RID SP, Net-RID DP, and the DSS.  It also prescribes data elements (in JSON) between the Observer and the Net-RID DP. DRIP could address standardization of secure protocols between the UA and GCS (over direct wireless and Internet connection), between the UAS and the Net-RID SP, and/or between the Net-RID DP and Observer devices.
+{{F3411-19}} prescribes the protocols between the Net-RID SP, Net-RID DP, and the DSS.  It also prescribes data elements (in JSON) between the Observer and the Net-RID DP. DRIP could address standardization of secure protocols between the UA and GCS (over direct wireless and Internet connection), between the UAS and the Net-RID SP, and/or between the Net-RID DP and Observer devices.
 
->> Informative note: Neither link layer protocols nor the use of links (e.g., the link often existing between the GCS and the UA) for any purpose other than carriage of UAS RID information is in the scope of {{F3411}} Network RID.
+>> Informative note: Neither link layer protocols nor the use of links (e.g., the link often existing between the GCS and the UA) for any purpose other than carriage of UAS RID information is in the scope of {{F3411-19}} Network RID.
 
-## Overview of UAS Service Supplier (USS) Interoperability ## 
+## Overview of USS Interoperability ## 
 
 With Net-RID, there is direct communication between each UAS and its USS. Multiple USS exchange information with the assistance of a DSS so all USS collectively have knowledge about all activities in a 4D airspace.  The interactions among an Observer, multiple UAS, and their USS are shown in {{inter-uss}}.
 
@@ -351,9 +362,7 @@ With Net-RID, there is direct communication between each UAS and its USS. Multip
 
 ## Overview of DRIP Architecture ##
 
-{{arch-intro}} illustrates a global UAS RID usage scenario. Broadcast RID links are not shown as they reach from 
-any UA to any listening receiver in range and thus would obscure the intent of the figure. {{arch-intro}} shows, 
-as context, some entities and interfaces beyond the scope of DRIP (as currently (2022) chartered).
+{{arch-intro}} illustrates a global UAS RID usage scenario. Broadcast RID links are not shown as they reach from any UA to any listening receiver in range and thus would obscure the intent of the figure. {{arch-intro}} shows, as context, some entities and interfaces beyond the scope of DRIP (as currently (2022) chartered).
 
 ~~~
 ***************                                        ***************
@@ -392,17 +401,17 @@ V2V:  Vehicle-to-Vehicle
 ~~~
 {: #arch-intro}
 
-DRIP is meant to leverage existing Internet resources (standard protocols, services, infrastructures, and business models) to meet UAS RID and closely related needs.  DRIP will specify how to apply IETF standards, complementing {{F3411}} and other external standards, to satisfy UAS RID requirements.
+> Informative note: see {{RFC9153}} for detailed definitions. 
 
-This document outlines the DRIP architecture in the context of the UAS RID architecture.  This includes presenting the gaps between the CAAs' Concepts of Operations and {{F3411}} as it relates to the use of Internet technologies and UA direct RF communications. Issues include, but are not limited to:
+DRIP is meant to leverage existing Internet resources (standard protocols, services, infrastructures, and business models) to meet UAS RID and closely related needs.  DRIP will specify how to apply IETF standards, complementing {{F3411-19}} and other external standards, to satisfy UAS RID requirements.
 
-> * Design of trustworthy remote identifiers ({{rid}}).
+This document outlines the DRIP architecture in the context of the UAS RID architecture.  This includes closing the gaps between the CAAs' Concepts of Operations and {{F3411-19}} as it relates to the use of Internet technologies and UA direct RF communications. Issues include, but are not limited to:
 
-> * Mechanisms to leverage Domain Name System (DNS {{RFC1034}}), 
-Extensible Provisioning Protocol (EPP {{RFC5731}}) and Registration Data Access Protocol (RDAP) ({{RFC9082}}) for publishing public and private information (see {{publicinforeg}} and {{privateinforeg}}).
+> * Design of trustworthy remote identifiers required by GEN-1 ({{rid}}).
 
-> * Specific authentication methods and message payload formats to enable verification that Broadcast RID messages were sent
-by the claimed sender ({{driptrust}}) and that sender is in the claimed registry ({{ei}} and {{driptrust}}). 
+> * Mechanisms to leverage the Domain Name System (DNS {{RFC1034}}), for registering and publishing public and private information (see {{publicinforeg}} and {{privateinforeg}}) as required by REG-1 and REG-2.
+
+> * Specific authentication methods and message payload formats to enable verification that Broadcast RID messages were sent by the claimed sender ({{driptrust}}) and that the sender is in the claimed registry ({{ei}} and {{driptrust}}) as required by GEN-2.
 
 > * Harvesting Broadcast RID messages for UTM inclusion, with the optional DRIP extension of Crowd Sourced Remote ID (CS-RID, {{harvestbridforutm}}), using the DRIP support for gateways required by GEN-5 {{RFC9153}}.
 
@@ -437,53 +446,63 @@ HIT: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Host Identity Tag
 
 ## Additional Definitions ##
 
-This section introduces the terms "Claims", "Assertions", "Attestations", and "Certificates" as used in DRIP. DRIP certificate has a different context compared with security certificates and Public Key Infrastructure used in X.509.
+This section introduces the terms "Claim", "Evidence", "Endorsement", and "Certificate" as used in DRIP. A DRIP certificate has a different context compared with security certificates and Public Key Infrastructure used in X.509.
 
-Claims:
+Claim:
 
-> A claim in DRIP is a predicate (e.g., "X is Y", "X has property Y", and most importantly "X owns Y" or "X is owned by Y").  
+> A claim shares the same definition as a claim in RATS {{I-D.ietf-rats-architecture}}; it is a piece of asserted information, sometimes in the form of a name/value pair. It could also been seen as a predicate (e.g., "X is Y", "X has property Y", and most importantly "X owns Y" or "X is owned by Y").
 
-Assertions:
+Evidence:
 
-> An assertion in DRIP is a set of claims.  This definition is borrowed from JWT {{RFC7519}} and CWT {{RFC8392}}.  
+> Evidence in DRIP borrows the same definition as in RATS {{I-D.ietf-rats-architecture}}; that is a set of claims.
 
-Attestations:  
+Endorsement:
 
-> An attestation in DRIP is a signed assertion.  The signer may be the claimant or a related party with stake in the assertion(s).  Under DRIP this is normally used when an entity asserts a relationship with another entity, along with other information, and the asserting entity signs the assertion, thereby making it an attestation. 
+> An Endorsement is inspired from RATS {{I-D.ietf-rats-architecture}}; it is a secure (i.e. signed) statement vouching the integrity and veracity of evidence.
 
-Certificates:
+Certificate:
 
-> A certificate in DRIP is an attestation, strictly over identity information, signed by a third party. This third party should be one with no stake in the attestation(s) over which it is signing.
+> A certificate in DRIP is an endorsement, strictly over identity information, signed by a third party. This third party should be one with no stake in the endorsement over which it is signing.
 
+DRIP Identity Management Entity (DIME):
+
+> An entity that performs functions similar to a domain registrar. A DIME vets Claims and/or Evidence from a registrant and delivers back Endorsements and/or Certificates in response. It is a high level entity in the DRIP registration/provisioning process.
 
 # HHIT as the DRIP Entity Identifier # {#rid}
 
-This section describes the DRIP architectural approach to meeting the basic requirements of a DRIP entity identifier within external technical standard ASTM {{F3411}} and regulatory constraints. It justifies and explains the use of Hierarchical Host Identity Tags (HHITs) {{RFC7401}} as self-asserting IPv6 addresses suitable as a UAS ID type and, more generally, as trustworthy multipurpose remote identifiers.
+This section describes the DRIP architectural approach to meeting the basic requirements of a DRIP entity identifier within external technical standard ASTM {{F3411-19}} and regulatory constraints. It justifies and explains the use of Hierarchical Host Identity Tags (HHITs) {{I-D.ietf-drip-rid}} as self-asserting IPv6 addresses suitable as a UAS ID type and, more generally, as trustworthy multipurpose remote identifiers.
 
-Self-asserting in this usage means that, given the Host Identity (HI), the HHIT ORCHID construction and a signature of the registry on the HHIT, the HHIT can be verified by the receiver. The explicit registration hierarchy within the HHIT provides registry discovery (managed by a Registrar) to either yield the HI for a 3rd-party (seeking UAS ID attestation) validation or prove that the HHIT and HI have been registered uniquely.
+Self-asserting in this usage means that given the Host Identity (HI), the HHIT ORCHID construction (see section 3.5 of {{I-D.ietf-drip-rid}}) and a signature of the registry on the HHIT and HI; the HHIT can be verified by the receiver as a trusted UAS ID. The explicit registration hierarchy within the HHIT provides registry discovery (managed by a DRIP Identity Management Entity (DIME)) to either yield the HI for a 3rd-party (seeking UAS ID attestation) validation or prove that the HHIT and HI have been registered uniquely.
 
 ## UAS Remote Identifiers Problem Space ##
 
-A DRIP entity identifier needs to be "Trustworthy" (See DRIP Requirement GEN-1, ID-4 and ID-5 in {{RFC9153}}). This means that given a sufficient collection of UAS RID messages, an Observer can establish that the identifier claimed therein uniquely belongs to the claimant. To satisfy DRIP requirements and maintain important security properties, the DRIP identifier should be self-generated by the entity it names (e.g., a UAS) and registered (e.g., with a USS, see Requirements GEN-3 and ID-2).
+A DRIP entity identifier needs to be "Trustworthy" (see DRIP Requirement GEN-1, ID-4 and ID-5 in {{RFC9153}}). This means that given a sufficient collection of UAS RID messages, an Observer can establish that the identifier claimed therein uniquely belongs to the claimant. To satisfy DRIP requirements and maintain important security properties, the DRIP identifier should be self-generated by the entity it names (e.g., a UAS) and registered (e.g., with a USS, see Requirements GEN-3 and ID-2).
 
-Broadcast RID, especially its support for Bluetooth 4.x, imposes severe constraints.  ASTM UAS RID {{F3411}} allows a UAS ID of types 1, 2 and 3 of 20 bytes; a revision to {{F3411}}, currently in balloting (as of Oct 2021), adds type 4, Specific Session ID, to be standardized by IETF and other standards development organizations (SDOs) as extensions to ASTM UAS RID, consumes one of those bytes to index the sub-type, leaving only 19 for the identifier (see DRIP Requirement ID-1 in {{RFC9153}}).  
+However the Broadcast RID, especially its support for Bluetooth 4.x, imposes severe constraints. The ASTM UAS RID {{F3411-19}} allows a UAS ID of types 1, 2 and 3 of 20 bytes. {{F3411-22a}} add an additional type 4 (Specific Session ID). Type 4 uses one byte to index the Specific Session ID (leaving 19 bytes, see ID-1 of DRIP Requirement {{RFC9153}}); Specific Session ID of value 1 is allocated to IETF DRIP by ASTM.  This new Specific Session ID will be standardized by IETF and other standards development organizations (SDOs) as extensions to ASTM UAS RID.
 
-Likewise, the maximum ASTM UAS RID {{F3411}} Authentication Message payload is 201 bytes for most authentication types. A type 5 is also added in this revision for IETF and other SDOs to develop Specific Authentication Methods as extensions to ASTM UAS RID. One byte out of 201 bytes is consumed to index the sub-type which leaves only 200 for DRIP authentication payloads, including one or more DRIP entity identifiers and associated authentication data.
+Likewise, the maximum ASTM UAS RID {{F3411-19}} Authentication Message payload is 201 bytes for most authentication types. A type 5 is also added in this revision for IETF and other SDOs to develop Specific Authentication Methods as extensions to ASTM UAS RID. One byte out of 201 bytes is consumed to index the sub-type which leaves only 200 for DRIP authentication payloads, including one or more DRIP entity identifiers and associated authentication data.
 
+## HHIT as a Cryptographic Identifier ## 
+
+The only (known to the authors at the time of this writing) existing types of IP address compatible identifiers cryptographically derived from the public keys of the identified entities are Cryptographically Generated Addresses (CGAs) {{RFC3972}} and Host Identity Tags (HITs) {{RFC7401}}.  CGAs and HITs lack registration/retrieval capability. To provide this, each HHIT embeds plaintext information designating the hierarchy within which it is registered and a cryptographic hash of that information concatenated with the entity's public key, etc. Although hash collisions may occur, the DIME can detect them and reject registration requests rather than issue credentials, e.g., by enforcing a first-claimed, first-attested policy. Pre-image hash attacks are also mitigated through this registration process, locking the HHIT to a specific HI.
 
 ## HHIT as A Trustworthy DRIP Entity Identifier ##
 
 A Remote UAS ID that can be trustworthy for use in Broadcast RID can be built from an asymmetric keypair. In this method, the UAS ID is cryptographically derived directly from the public key. The proof of UAS ID ownership (verifiable attestation, versus mere claim) is guaranteed by signing this cryptographic UAS ID with the associated private key. The association between the UAS ID and the private key is ensured by cryptographically binding the public key with the UAS ID; more specifically, the UAS ID results from the hash of the public key. The public key is designated as the HI while the UAS ID is designated as the HIT.
 
-By construction, the HIT is statistically unique through the cryptographic hash feature of second-preimage resistance. The cryptographically-bound addition of the Hierarchy and an HHIT registration process provide complete, global HHIT uniqueness. This registration forces the attacker to generate the same public key rather than a public key that generates the same HHIT. This is in contrast to general IDs (e.g., a UUID or device serial number) as the subject in an X.509 certificate.
+By construction, the HIT is statistically unique through the mandatory use of cryptographic hash functions with second-preimage resistance. The cryptographically-bound addition of the Hierarchy and an HHIT registration process provide complete, global HHIT uniqueness. This registration forces the attacker to generate the same public key rather than a public key that generates the same HHIT. This is in contrast to general IDs (e.g., a UUID or device serial number) as the subject in an X.509 certificate.
 
-A UA equipped for Broadcast RID MUST be provisioned not only with its HHIT but also with the HI public key from which the HHIT was derived and the corresponding private key, to enable message signature.  A UAS equipped for Network RID SHOULD be provisioned likewise; the private key resides only in the ultimate source of Network RID messages (i.e., on the UA itself if the GCS is merely relaying rather than sourcing Network RID messages).  Each Observer device SHOULD be provisioned either with public keys of the DRIP identifier root registries or certificates for subordinate registries.
+A UA equipped for Broadcast RID MUST be provisioned not only with its HHIT but also with the HI public key from which the HHIT was derived and the corresponding private key, to enable message signature.  
+
+A UAS equipped for DRIP enhanced Network RID MUST be provisioned likewise; the private key resides only in the ultimate source of Network RID messages. If the GCS is the source of the Network RID messages; the GCS MUST hold the private key. If the UA is the source of the Network RID messages and they are being relayed by the GCS; the UA MUST hold the private key, just as a UA that directly connects to the network rather than through its GCS.
+
+Each Observer device functioning with Internet connectivity MAY be provisioned either with public keys of the DRIP identifier root registries or certificates for subordinate registries; each Observer devices that needs to operate without Internet connectivity at any time MUST be so provisioned.
 
 HHITs can also be used throughout the USS/UTM system. Operators and Private Information Registries, as well as other UTM entities, can use HHITs for their IDs. Such HHITs can facilitate DRIP security functions such as used with HIP to strongly mutually authenticate and encrypt communications.
 
-A self-attestation of a HHIT used as a UAS ID can be done in as little as 84 bytes when Ed25519 {{RFC8032}} is used, by avoiding an explicit encoding technology like ASN.1 or Concise Binary Object Representation (CBOR) {{RFC8949}}. This attestation consists of only the HHIT, a timestamp, and the EdDSA signature on them. 
+A self-attestation of a HHIT used as a UAS ID can be done in as little as 84 bytes when Ed25519 {{RFC8032}} is used by only including the 16-byte HHIT, a 4-byte timestamp, and the 64-byte Ed25519 signature.
 
-Ed25519 {{RFC8032}} is used as the HHIT signing algorithm as {{RFC9153}} GEN-1 and ID-5 can best be met by restricting the HI to 32 bytes. A larger public key would rule out the offline attestation feature that fits within the 200-byte Authentication Message maximum length. Other algorithms that meet this 32 byte constraint can be added as deemed needed.
+Ed25519 {{RFC8032}} is used as the HHIT Mandatory to Implement signing algorithm as {{RFC9153}} GEN-1 and ID-5 can best be met by restricting the HI to 32 bytes.  A larger public key would rule out the offline attestation feature that fits within the 200-byte Authentication Message maximum length.  Other algorithms that meet this 32 byte constraint can be added as deemed needed.
 
 A DRIP identifier can be assigned to a UAS as a static HHIT by its manufacturer, such as a single HI and derived HHIT encoded as a hardware serial number per {{CTA2063A}}.  Such a static HHIT SHOULD only be used to bind one-time use DRIP identifiers to the unique UA.  Depending upon implementation, this may leave a HI private key in the possession of the manufacturer (see also {{sc}}).
 
@@ -492,27 +511,24 @@ In general, Internet access may be needed to validate Attestations or Certificat
 ## HHIT for DRIP Identifier Registration and Lookup ## {#hhitregandlookup}
 
 UAS RID needs a deterministic lookup mechanism that rapidly provides actionable information about the identified UA.  Given the size constraints imposed by the Bluetooth 4 broadcast media, the UAS ID itself needs to be a non-spoofable inquiry input into the lookup.
+ 
+A DRIP registration process based on the explicit hierarchy within a HHIT provides manageable uniqueness of the HI for the HHIT.  The hierarchy is defined in {{I-D.ietf-drip-rid}} and consists of 2-levels, a Registered Assigning Authority (RAA) and then a Hierarchical HIT Domain Authority (HDA). The registration within this hierarchy is the defense against a cryptographic hash second pre-image attack on the HHIT (e.g., multiple HIs yielding the same HHIT, see Requirement ID-3 in {{RFC9153}}). Registration first-come-first served is adequate.
 
-A DRIP registration process based on the explicit hierarchy within a HHIT provides manageable uniqueness of the HI for the HHIT.  This is the defense against a cryptographic hash second pre-image attack on the HHIT (e.g., multiple HIs yielding the same HHIT, see Requirement ID-3).  A lookup of the HHIT into this registration data provides the registered HI for HHIT proof of ownership.  A first-come-first-served registration for a HHIT provides deterministic access to any other needed actionable information based on inquiry access authority (more details are provided in {{privateinforeg}}).
-
-## HHIT as a Cryptographic Identifier ## 
-
-The only (known to the authors at the time of this writing) existing types of IP address compatible identifiers cryptographically derived from the public keys of the identified entities are Cryptographically Generated Addresses (CGAs) {{RFC3972}} and Host Identity Tags (HITs) {{RFC7401}}.  CGAs and HITs lack registration/retrieval capability. To provide this, each HHIT embeds plaintext information designating the hierarchy within which it is registered and a cryptographic hash of that information concatenated with the entity's public key, etc. Although hash collisions may occur, the registrar can detect them and reject registration requests rather than issue credentials, e.g., by enforcing a first-claimed, first-attested policy. Pre-image hash attacks are also mitigated through this registration process, locking the HHIT to a specific HI
-
+A lookup of the HHIT into the registry data provides the registered HI for HHIT proof of ownership and deterministic access to any other needed actionable information based on inquiry access authority (more details in {{privateinforeg}}).
 
 # DRIP Identifier Registration and Registries # {#ei}
 
-DRIP registries {{I-D.ietf-drip-registries}} hold both public and private UAS information (See PRIV-1 in {{RFC9153}}) resulting from the DRIP identifier registration process.  Given these different uses, and to improve scalability, security, and simplicity of administration, the public and private information can be stored in different registries.  This section introduces the public and private information registries for DRIP identifiers. This DRIP Identifier registration process satisfies the following DRIP requirements defined in {{RFC9153}}: GEN-3, GEN-4, ID-2, ID-4, ID-6, PRIV-3, PRIV-4, REG-1, REG-2, REG-3 and REG-4. 
+DRIP registries hold both public and private UAS information (see PRIV-1 in {{RFC9153}}) resulting from the DRIP identifier registration process.  Given these different uses, and to improve scalability, security, and simplicity of administration, the public and private information can be stored in different registries.  This section introduces the public and private information registries for DRIP identifiers. This DRIP Identifier registration process satisfies the following DRIP requirements defined in {{RFC9153}}: GEN-3, GEN-4, ID-2, ID-4, ID-6, PRIV-3, PRIV-4, REG-1, REG-2, REG-3 and REG-4.
 
 ## Public Information Registry ## {#publicinforeg}
 
 ### Background ###
 
-The public information registry provides trustable information such as attestations of UAS RID ownership and registration with the HDA (Hierarchical HIT Domain Authority). Optionally, pointers to the registries for the HDA and RAA (Registered Assigning Authority) implicit in the UAS RID can be included (e.g., for HDA  and RAA HHIT\|HI used in attestation signing operations).  This public information will be principally used by Observers of Broadcast RID messages.  Data on UAS that only use Network RID, is available via an Observer's Net-RID DP that would directly provide all public information registry information. The Net-RID DP is the only source of information for a query on an airspace volume.
+The public information registry provides trustable information such as attestations of UAS RID ownership and registration with the HDA (Hierarchical HIT Domain Authority). Optionally, pointers to the registries for the HDA and RAA (Registered Assigning Authority) implicit in the UAS RID can be included (e.g., for HDA  and RAA HHIT\|HI used in attestation signing operations).  This public information will be principally used by Observers of Broadcast RID messages.  Data on UASs that only use Network RID, is available via an Observer's Net-RID DP that would directly provide all public registry information. The Net-RID DP is the only source of information for a query on an airspace volume.
 
 ### DNS as the Public DRIP Identifier Registry ###
 
-A DRIP identifier SHOULD be registered as an Internet domain name (at an arbitrary level in the hierarchy, e.g., in .ip6.arpa). Thus DNS can provide all the needed public DRIP information.  A standardized HHIT FQDN (Fully Qualified Domain Name) can deliver the HI via a HIP RR (Resource Record) {{RFC8005}} and other public information (e.g., RRA and HDA PTRs, and HIP RVS (Rendezvous Servers) {{RFC8004}}). These public information registries can use secure DNS transport (e.g.,  DNS over TLS) to deliver public information that is not inherently trustable (e.g., everything other than attestations).
+A DRIP identifier MUST be registered as an Internet domain name (at an arbitrary level in the hierarchy, e.g., in .ip6.arpa). Thus DNS can provide all the needed public DRIP information.  A standardized HHIT FQDN (Fully Qualified Domain Name) can deliver the HI via a HIP RR (Resource Record) {{RFC8005}} and other public information (e.g., RAA and HDA PTRs, and HIP RVS (Rendezvous Servers) {{RFC8004}}). These public information registries can use DNSSEC to deliver public information that is not inherently trustable (e.g., everything other than attestations).
 
 This DNS entry for the HHIT can also provide a revocation service.  For example,
 instead of returning the HI RR it may return some record showing that the HI
@@ -522,31 +538,31 @@ instead of returning the HI RR it may return some record showing that the HI
 
 ### Background ###
 
-The private information required for DRIP identifiers is similar to that required for Internet domain name registration.  A DRIP identifier solution can leverage existing Internet resources: registration protocols, infrastructure, and business models, by fitting into an UAS ID structure compatible with DNS names.  The HHIT hierarchy can provide the needed scalability and management structure. It is expected that the private information registry function will be provided by the same organizations that run a USS, and likely integrated with a USS.  The lookup function may be implemented by the Net-RID DPs.
+The private information required for DRIP identifiers is similar to that required for Internet domain name registration.  A DRIP identifier solution can leverage existing Internet resources: registration protocols, infrastructure, and business models, by fitting into a UAS ID structure compatible with DNS names.  The HHIT hierarchy can provide the needed scalability and management structure. It is expected that the private information registry function will be provided by the same organizations that run a USS, and likely integrated with a USS.  The lookup function may be implemented by the Net-RID DPs.
 
-### EPP and RDAP as the Private DRIP Identifier Registry ### 
+### Primary Private DRIP Identifier Registry Methods ### 
 
-A DRIP private information registry supports essential registry operations (e.g., add, delete, update, and query) using interoperable open standard protocols. It can accomplish this by using the Extensible Provisioning Protocol (EPP) {{RFC5730}} and the Registry Data Access Protocol (RDAP) {{RFC7480}} {{RFC9082}} {{RFC9083}}.  The DRIP private information registry in which a given UAS is registered needs to be findable, starting from the UAS ID, using the methods specified in {{RFC7484}}.
+A DRIP private information registry supports essential registry operations (e.g., add, delete, update, query) using interoperable open standard protocols. It can accomplish this by leveraging the concepts of Extensible Provisioning Protocol (EPP {{RFC5730}}) and the Registry Data Access Protocol (RDAP {{RFC7480}} {{RFC9082}} {{RFC9083}}).  The DRIP private information registry in which a given UAS is registered needs to be findable, starting from the UAS ID, using the methods specified in {{RFC9224}}.
 
-### Alternative Private DRIP Registry methods ###
+### Alternative Private DRIP Registry Methods ###
 
-A DRIP private information registry might be an access-controlled DNS (e.g., via DNS-over-TLS {{RFC7858}}).  Additionally, WebFinger {{RFC7033}} can be deployed. These alternative methods may be used by a Net-RID DP with specific customers.
+A DRIP private information registry might be an access-controlled DNS (e.g., via DNS over TLS) or a blockchain.  Additionally, WebFinger {{RFC7033}} can be supported. These alternative methods may be used by Net-RID DP with specific customers.
 
-# DRIP Identifier Trust # {#driptrust}
+# DRIP Identifier Trust # {#driptrust} 
 
-While the DRIP entity identifier is self-asserting, it alone does not provide the trustworthiness (non-repudiability, protection vs. spoofing, message integrity protection, scalability, etc.) essential to UAS RID, as justified in {{RFC9153}}. For that it MUST be registered (under DRIP Registries) and be actively used by the party (in most cases the UA). A sender's identity can not be approved by only possessing a DRIP Entity Tag (DET), which is an HHIT-based UA ID and broadcasting a claim that it belongs to that sender.  Even the sender using that HI's private key to sign static data proves nothing as well, as it is subject to trivial replay attacks. Only sending the DET and a signature on frequently changing data that can be sanity-checked by the Observer (such as a Location/Vector message) proves that the observed UA possesses the claimed UAS ID. 
+While the DRIP entity identifier is self-asserting, it alone does not provide the trustworthiness (non-repudiability, protection vs. spoofing, message integrity protection, scalability, etc.) essential to UAS RID, as justified in {{RFC9153}}. For that it MUST be registered (under DRIP Registries) and be actively used by the party (in most cases the UA).  A sender's identity can not be proved by only possessing a DRIP Entity Tag (DET) and broadcasting it as a claim that it belongs to that sender.  Even the sender using that HI's private key to sign static data proves nothing as well, as it is subject to trivial replay attacks.  Only sending the DET and a signature on frequently changing data (which is unpredicatable) that can be externally validated by the Observer (such as a Location/Vector message matching actually seeing the UA at that location) proves that the observed UA possesses the claimed UAS ID.
 
-For Broadcast RID, it is a challenge to balance the original requirements of Broadcast RID and the efforts needed  to satisfy the DRIP requirements all under severe constraints. From received Broadcast RID messages and information that can be looked up using the received UAS ID in online registries or local caches, it is possible to establish levels of trust in the asserted information and the Operator. 
+The severe constraints of Broadcast RID make it challenging to satisfy UAS RID requirements. From received Broadcast RID messages and information that can be looked up using the received UAS ID in online registries or local caches, it is possible to establish levels of trust in the asserted information and the Operator.
 
-Optimization of different DRIP Authentication Messages allows an Observer, without (offline) or with (online) Internet connection, to be able to validate a UAS DRIP ID in real-time. A typical flow to provide such a validaton is: First is the sending of Broadcast Attestations (over DRIP Link Authentication Messages) {{-drip-authentication}} containing the relevant registration of the UA's DRIP ID in the claimed Registry.  Next is sending DRIP Wrapper Authentication Messages that sign over both static (e.g., above registration) and dynamically changing data (such as UA location data).  Combining these two sets of information, an Observer can piece together a chain of trust and real-time evidence to make their determination of the UA's claims. 
+Optimization of different DRIP Authentication Messages allows an Observer, without Internet connection (offline) or with (online), to be able to validate a UAS DRIP ID in real-time.  First is the sending of messages containing the relevant registration of the UA's DRIP ID in the claimed Registry.  Next is sending messages that sign over both static (e.g., above registration) and dynamically changing data (such as UA location data).  Combining these two sets of information, an Observer can piece together a chain of trust and real-time evidence to make their determination of the UA's claims.
 
-This process (combining the DRIP entity identifier, Registries and Authentication Formats for Broadcast RID) can satisfy the following DRIP requirements defined in {{RFC9153}}: GEN-1, GEN-2, GEN-3, ID-2, ID-3, ID-4, and ID-5.
+This process (combining the DRIP entity identifier, Registries and Authentication Formats for Broadcast RID) can satisfy the following DRIP requirement defined in {{RFC9153}}: GEN-1, GEN-2, GEN-3, ID-2, ID-3, ID-4 and ID-5.
 
 
-# Harvesting Broadcast Remote ID Messages for UTM Inclusion # {#harvestbridforutm}
+# Harvesting Broadcast Remote ID messages for UTM Inclusion # {#harvestbridforutm}
 
 ASTM anticipated that regulators would require both Broadcast RID and
-Network RID for large UAS, but allow UAS RID requirements for small UAS
+Network RID for large UASs, but allow UAS RID requirements for small UAS
 to be satisfied with the operator's choice of either Broadcast RID or
 Network RID.  The EASA initially specified Broadcast RID for essentially all UAS, and is now also considering Network RID.  The FAA UAS RID Final Rules {{FAA_RID}} permit only Broadcast RID for rule compliance, but still encourage Network RID for complementary functionality, especially in support of UTM.
 
@@ -571,23 +587,23 @@ A CS-RID Finder is the gateway for Broadcast Remote ID Messages into UTM.  It pe
 
 ## The CS-RID SDSP ## {#csridsdsp}
 
-A CS-RID SDSP aggregates and processes (e.g., estimates UA location using multilateration when possible) information collected by CS-RID Finders. A CS-RID SDSP should appear (i.e., present the same interface) to a Net-RID SP as a Net-RID DP.  
+A CS-RID SDSP aggregates and processes (e.g., estimates UA location using multilateration when possible) information collected by CS-RID Finders. A CS-RID SDSP should appear (i.e., present the same interface) to a Net-RID SP as a Net-RID DP and to a Net-RID DP like a Net-RID SP but be readily distinguishable with its data source.  
 
 # DRIP Contact # {#dripcontact}
 
-One of the ways in which DRIP can enhance {{F3411}} with immediately actionable information is by enabling an Observer to instantly initiate secure communications with the UAS remote pilot, Pilot In Command, operator, USS under which the operation is being flown, or other entity potentially able to furnish further information regarding the operation and its intent and/or to immediately influence further conduct or termination of the operation (e.g., land or otherwise exit an airspace volume). Such potentially distracting communications demand strong "AAA" (Authentication, Attestation, Authorization, Access Control, Accounting, Attribution, Audit) per applicable policies (e.g., of the cognizant CAA). 
+One of the ways in which DRIP can enhance {{F3411-19}} with immediately actionable information is by enabling an Observer to instantly initiate secure communications with the UAS remote pilot, Pilot In Command, operator, USS under which the operation is being flown, or other entity potentially able to furnish further information regarding the operation and its intent and/or to immediately influence further conduct or termination of the operation (e.g., land or otherwise exit an airspace volume). Such potentially distracting communications demand strong "AAA" (Authentication, Attestation, Authorization, Access Control, Accounting, Attribution, Audit) per applicable policies (e.g., of the cognizant CAA). 
 
 A DRIP entity identifier based on a HHIT as outlined in {{rid}} embeds an identifier of the registry in which it can be found (expected typically to be the USS under which the UAS is flying) and the procedures outlined in {{driptrust}} enable Observer verification of that relationship. A DRIP entity identifier with suitable records in public and private registries as outlined in Section 5 can enable lookup not only of information regarding the UAS, but also identities of and pointers to information regarding the various associated entities (e.g., the USS under which the UAS is flying an operation), including means of contacting those associated entities (i.e., locators, typically IP addresses). 
 
-A suitably equipped Observer could initiate a cryptographic handshake to a similarly equipped and identified entity: the UA itself, if operating autonomously; the GCS, if the UA is remotely piloted and the necessary records have been populated in DNS; the USS, etc. Assuming mutual authentication is successful, keys can then be negotiated for an IPsec Encapsulating Security Payload (ESP) tunnel, over which arbitrary standard higher layer protocols can then be used for Observer to Pilot (O2P)communications (e.g., SIP {{RFC3261}} et seq), V2X communications (e.g., {{MAVLink}}), etc. Certain preconditions are necessary: each party needs a currently usable means (typically DNS) of resolving the other party's DRIP entity identifier to a currently usable locator (IP address); and there must be currently usable bidirectional IP (not necessarily Internet) connectivity between the parties. One method directly supported by the use of HHITs as DRIP entity identifiers is initiation of a HIP Base Exchange (BEX) and Bound End-to-End Tunnel (BEET).
+A suitably equipped Observer could initiate a secure communication channel, using the DET HI, to a similarly equipped and identified entity: the UA itself, if operating autonomously; the GCS, if the UA is remotely piloted and the necessary records have been populated in DNS; the USS, etc. Assuming secure communication setup (e.g. via IPsec or HIP), arbitrary standard higher layer protocols can then be used for Observer to Pilot (O2P) communications (e.g., SIP {{RFC3261}} et seq), V2X communications (e.g., {{MAVLink}}), etc. Certain preconditions are necessary: each party needs a currently usable means (typically DNS) of resolving the other party's DRIP entity identifier to a currently usable locator (IP address); and there must be currently usable bidirectional IP (not necessarily Internet) connectivity between the parties.  One method directly supported by the use of HHITs as DRIP entity identifiers is initiation of a HIP Base Exchange (BEX) and Bound End-to-End Tunnel (BEET).
 
 This approach satisfies DRIP requirement GEN-6 Contact, supports satisfaction of requirements {{RFC9153}} GEN-8, GEN-9, PRIV-2, PRIV-5 and REG-3, and is compatible with all other DRIP requirements.
 
 # Security Considerations # {#sc}
 
-The size of the public key hash in the HHIT is vulnerable to a second-image attack. It is well within current server array technology to compute another key pair that hashes to the same HHIT. Thus, if a receiver were to check HHIT validity only by verifying that the received HI and associated information, when hashed in the ORCHID construction, reproduce the received HHIT, an adversary could impersonate a validly registered UA. To defend against this, on-line receivers should verify the received HHIT and received HI with the USS with which the HHIT purports to be registered. On-line and off-line receivers can use a chain of received DRIP link attestations from a root of trust through the RAA and the HDA to the UA, as described in {{I-D.ietf-drip-auth}} and {{I-D.ietf-drip-registries}}.
+The size of the public key hash in the HHIT is vulnerable to a second-image attack. It is well within current server array technology to compute another key pair that hashes to the same HHIT. Thus, if a receiver were to check HHIT validity only by verifying that the received HI and associated information, when hashed in the ORCHID construction, reproduce the received HHIT, an adversary could impersonate a validly registered UA. To defend against this, on-line receivers should verify the received HHIT and received HI with the USS with which the HHIT purports to be registered. On-line and off-line receivers can use a chain of received DRIP link attestations from a root of trust through the RAA and the HDA to the UA, as described, in {{I-D.ietf-drip-auth}} and {{I-D.ietf-drip-registries}}.
 
-Compromise of a registry private key could do widespread harm. Key revocation procedures are as yet to be determined. These risks are in addition to those involving Operator key management practices and will be addressed as part of the registry process.
+Compromise of a registry private key could do widespread harm {{I-D.ietf-drip-registries}}. In particular, it would allow bad actors to impersonate trusted members of said registry. Key revocation procedures are as yet to be determined. These risks are in addition to those involving Operator key management practices and will be addressed as part of the registry process.
 
 ## Private Key Physical Security ##
 
@@ -595,7 +611,7 @@ The security provided by asymmetric cryptographic techniques depends upon protec
 
 Since it is possible for the UAS RID sender of a small harmless UA (or the entire UA) to be carried by a larger dangerous UA as a "false flag", it is out of scope to deal with secure store for the private key.
 
-## Post Quantum Computing Out Of Scope ##
+## Quantum Resistant Cryptography ##
 
 There has been no effort, at this time, to address post quantum computing
 cryptography.  UAs and Broadcast Remote ID communications are so
@@ -603,17 +619,15 @@ constrained that current post quantum computing cryptography is not
 applicable.  Plus since a UA may use a unique HHIT for each operation, the
 attack window could be limited to the duration of the operation.
 
-Finally, as the HHIT contains the ID for the cryptographic suite used in its creation,
-a future post quantum computing safe algorithm that fits the Remote ID constraints may readily be added.
+One potential use for post quantum cryptography is its use in keypairs that have long usage lives, but rarely if ever need to be transmitted over bandwidth constrained links; such as for Serial Numbers or Operators. Finally, as the HHIT contains the ID for the cryptographic suite used in its creation, a future post quantum computing safe algorithm that fits the Remote ID constraints may readily be added.
 
-## Denial Of Service (DOS) Protection Out Of Scope ## 
+## Denial Of Service (DOS) Protection ## 
 
-Remote ID services from the UA use a wireless link in a public space. As such, they are open to many forms of RF jamming. It is trivial for an attacker to stop any UA messages from reaching a wireless receiver. Thus it is pointless to attempt to provide relief from DOS attacks as there is always the ultimate RF jamming attack. Subtle DOS attacks of message content altering are not practical with the basic message error correction provided. Finally, this whole architecture is put forth to make DOS spoofing/replay attacks very hard.
+Remote ID services from the UA use a wireless link in a public space. As such, they are open to many forms of RF jamming. It is trivial for an attacker to stop any UA messages from reaching a wireless receiver. Thus it is pointless to attempt to provide relief from DOS attacks as there is always the ultimate RF jamming attack. Also the DRIP architecture make spoofing/replay attacks, that might be used to attempt DOS, very hard.
 
 # Privacy & Transparency Considerations # {#privacyforbrid}
 
-Broadcast RID messages can contain Personally Identifiable Information (PII).  A viable architecture for PII protection would be symmetric encryption of the PII using a session key known to the UAS and its USS. Authorized Observers could obtain plaintext in either of two ways. An Observer can send the UAS ID and the cyphertext to a server that offers decryption as a service. An Observer can send the UAS ID only to a server that returns the session key, so that Observer can directly locally decrypt all cyphertext sent by that UA during that session (UAS operation). In either case, the server can be: a Public Safety USS, the Observer's own USS, or the UA's USS if the latter can be determined (which under DRIP it can be, from the UAS ID itself).  PII can be protected unless the UAS is informed otherwise.  This could come as part of UTM operation authorization. It can be special instructions at the start or during an operation. PII protection MUST NOT be used if the UAS loses connectivity to the USS.  The UAS always has the option to abort the operation if PII protection is disallowed.
-
+Broadcast RID messages can contain Personally Identifiable Information (PII).  A viable architecture for PII protection would be symmetric encryption of the PII using a session key known to the UAS and its USS. Authorized Observers could obtain plaintext in either of two ways. An Observer can send the UAS ID and the cyphertext to a server that offers decryption as a service. An Observer can send the UAS ID only to a server that returns the session key, so that Observer can directly locally decrypt all cyphertext sent by that UA during that session (UAS operation). In either case, the server can be: a Public Safety USS, the Observer's own USS, or the UA's USS if the latter can be determined (which under DRIP it can be, from the UAS ID itself).  PII can be protected unless the UAS is informed otherwise.  This could come as part of UTM operation authorization. It can be special instructions at the start or during an operation. PII protection MUST NOT be used if the UAS loses connectivity to the USS, as if the UAS loses connectivity chances are Observers also won't have connectivity in the vicinity to enabled decryption of the PII. The UAS always has the option to abort the operation if PII protection is disallowed.
 
 --- back
 
@@ -663,10 +677,10 @@ This section illustrates a couple of use case scenarios where UAS participation 
 
 1. For a UAS participating in UTM and taking off or landing in
 controlled airspace (e.g., Class Bravo, Charlie, Delta, and Echo
-in the United States), the USS under which the UAS is operating is responsible for verifying UA registration, authenticating the UAS operational intent (flight plan) by checking against designated UAS facility map database, obtaining the air traffic control (ATC) authorization, and monitoring the UAS flight path in order to maintain safe margins and follow the pre-authorized sequence of authorized 4-D volumes (route).
+in the United States), the USS under which the UAS is operating is responsible for verifying UA registration, authenticating the UAS operational intent (flight plan) by checking against a designated UAS facility map database, obtaining the air traffic control (ATC) authorization, and monitoring the UAS flight path in order to maintain safe margins and follow the pre-authorized sequence of authorized 4-D volumes (route).
 
 1. For a UAS participating in UTM and taking off or landing in uncontrolled airspace (e.g., Class Golf in the United States), pre-flight authorization must be obtained from a USS when operating
-beyond-visual-of-sight (BVLOS).  The USS either accepts or rejects the received operational intent (flight plan) from the UAS.  Accepted UAS operation may share its current flight data such as GPS position and altitude to USS.  The USS may keep the UAS operation status near real-time and may keep it as a record for overall airspace air traffic monitoring.
+Beyond-Visual-Line-of-Sight (BVLOS).  The USS either accepts or rejects the received operational intent (flight plan) from the UAS.  Approved UAS operation may share its current flight data such as GPS position and altitude to the USS.  The USS may keep the UAS operation status near real-time and may keep it as a record for overall airspace air traffic monitoring.
 
 
 # Automatic Dependent Surveillance Broadcast (ADS-B)  # {#adsb}
@@ -674,17 +688,17 @@ beyond-visual-of-sight (BVLOS).  The USS either accepts or rejects the received 
 The ADS-B is the de jure technology used in manned aviation for sharing location information, from the aircraft to ground and satellite-based systems, designed in the early 2000s. Broadcast RID is 
 conceptually similar to ADS-B, but with the receiver target being the general public on generally available devices (e.g., smartphones).
 
-For numerous technical reasons, ADS-B itself is not suitable for 
-low-flying small UAS. Technical reasons include but not limited to the following:
+For numerous technical reasons, ADS-B itself is not suitable for low-flying small UAS. Technical reasons include but are not limited to the following:
 
 1. Lack of support for the 1090 MHz ADS-B channel on any consumer handheld devices
-1. Weight and cost of ADS-B transponders on CSWaP constrained UA
-1. Limited bandwidth of both uplink and downlink, which would likely be saturated by large numbers of UAS, endangering manned aviation
+1. Weight and cost of ADS-B transponders on CSWaP (Cost, Size, Weight, and Power) constrained UA
+1. Limited bandwidth of both uplink and downlink, which would likely be saturated by large numbers of UASs, endangering manned aviation
 
 Understanding these technical shortcomings, regulators worldwide have ruled out the use of ADS-B for the small UAS for which UAS RID and DRIP are intended.
 
-Acknowledgements
+Acknowledgments
 ================
 {: numbered="no"}
 
 The work of the FAA's UAS Identification and Tracking (UAS ID) Aviation Rulemaking Committee (ARC) is the foundation of later ASTM and proposed IETF DRIP WG efforts.  The work of ASTM F38.02 in balancing the interests of diverse stakeholders is essential to the necessary rapid and widespread deployment of UAS RID. Thanks to Alexandre Petrescu and Stephan Wenger for the helpful and positive comments. Thanks to chairs Daniel Migault and Mohamed Boucadair for direction of our team of authors and editor, some of whom are newcomers to writing IETF documents. Laura Welch is also thanked for her valuable review comments that led to great improvements of this memo.  Thanks especially to Internet Area Director Eric Vyncke for guidance and support.
+ 
