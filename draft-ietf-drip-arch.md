@@ -1,8 +1,7 @@
 ---
 title: Drone Remote Identification Protocol (DRIP) Architecture
-abbrev: DRIP Architecture 
-docname: draft-ietf-drip-arch-26
-date: 2022-08-01
+abbrev: DRIP Architecture
+docname: draft-ietf-drip-arch-27
 
 stand_alone: true
 
@@ -419,8 +418,6 @@ This document outlines the DRIP architecture in the context of the UAS RID archi
 
 > * Privacy in UAS RID messages (PII protection) ({{privacyforbrid}}).
 
-
-
 # Terms and Definitions #
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in BCP 14 {{RFC2119}} {{RFC8174}} when, and only when, they appear in all capitals, as shown here.   
@@ -442,7 +439,6 @@ HI: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Host Identity
 HIP: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Host Identity Protocol
 
 HIT: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Host Identity Tag
-
 
 ## Additional Definitions ##
 
@@ -526,7 +522,7 @@ DRIP registries hold both public and private UAS information (see PRIV-1 in {{RF
 
 The public information registry provides trustable information such as attestations of UAS RID ownership and registration with the HDA (Hierarchical HIT Domain Authority). Optionally, pointers to the registries for the HDA and RAA (Registered Assigning Authority) implicit in the UAS RID can be included (e.g., for HDA  and RAA HHIT\|HI used in attestation signing operations).  This public information will be principally used by Observers of Broadcast RID messages.  Data on UASs that only use Network RID, is available via an Observer's Net-RID DP that would directly provide all public registry information. The Net-RID DP is the only source of information for a query on an airspace volume.
 
-### DNS as the Public DRIP Identifier Registry ###
+### Public DRIP Identifier Registry ###
 
 A DRIP identifier MUST be registered as an Internet domain name (at an arbitrary level in the hierarchy, e.g., in .ip6.arpa). Thus DNS can provide all the needed public DRIP information.  A standardized HHIT FQDN (Fully Qualified Domain Name) can deliver the HI via a HIP RR (Resource Record) {{RFC8005}} and other public information (e.g., RAA and HDA PTRs, and HIP RVS (Rendezvous Servers) {{RFC8004}}). These public information registries can use DNSSEC to deliver public information that is not inherently trustable (e.g., everything other than attestations).
 
@@ -540,9 +536,9 @@ instead of returning the HI RR it may return some record showing that the HI
 
 The private information required for DRIP identifiers is similar to that required for Internet domain name registration.  A DRIP identifier solution can leverage existing Internet resources: registration protocols, infrastructure, and business models, by fitting into a UAS ID structure compatible with DNS names.  The HHIT hierarchy can provide the needed scalability and management structure. It is expected that the private information registry function will be provided by the same organizations that run a USS, and likely integrated with a USS.  The lookup function may be implemented by the Net-RID DPs.
 
-### Primary Private DRIP Identifier Registry Methods ### 
+### Private DRIP Identifier Registry Methods ### 
 
-A DRIP private information registry supports essential registry operations (e.g., add, delete, update, query) using interoperable open standard protocols. It can accomplish this by leveraging the concepts of Extensible Provisioning Protocol (EPP {{RFC5730}}) and the Registry Data Access Protocol (RDAP {{RFC7480}} {{RFC9082}} {{RFC9083}}).  The DRIP private information registry in which a given UAS is registered needs to be findable, starting from the UAS ID, using the methods specified in {{RFC9224}}.
+A DRIP private information registry supports essential registry operations (e.g., add, delete, update, query) using interoperable open standard protocols. It can accomplish this by leveraging aspects of Extensible Provisioning Protocol (EPP {{RFC5730}}) and the Registry Data Access Protocol (RDAP {{RFC7480}} {{RFC9082}} {{RFC9083}}).  The DRIP private information registry in which a given UAS is registered needs to be findable, starting from the UAS ID, using the methods specified in {{RFC9224}}.
 
 ### Alternative Private DRIP Registry Methods ###
 
@@ -557,7 +553,6 @@ The severe constraints of Broadcast RID make it challenging to satisfy UAS RID r
 Optimization of different DRIP Authentication Messages allows an Observer, without Internet connection (offline) or with (online), to be able to validate a UAS DRIP ID in real-time.  First is the sending of messages containing the relevant registration of the UA's DRIP ID in the claimed Registry.  Next is sending messages that sign over both static (e.g., above registration) and dynamically changing data (such as UA location data).  Combining these two sets of information, an Observer can piece together a chain of trust and real-time evidence to make their determination of the UA's claims.
 
 This process (combining the DRIP entity identifier, Registries and Authentication Formats for Broadcast RID) can satisfy the following DRIP requirement defined in {{RFC9153}}: GEN-1, GEN-2, GEN-3, ID-2, ID-3, ID-4 and ID-5.
-
 
 # Harvesting Broadcast Remote ID messages for UTM Inclusion # {#harvestbridforutm}
 
@@ -581,8 +576,8 @@ Further, gateways with additional sensors (e.g., smartphones with cameras) can p
 
 This approach satisfies the following DRIP requirements defined in {{RFC9153}}: GEN-5, GEN-11, and REG-1. As Broadcast messages are inherently multicast, GEN-10 is met for local-link multicast to multiple Finders (how multilateration is possible).
 
-
 ## The CS-RID Finder ## {#csridfinder}
+
 A CS-RID Finder is the gateway for Broadcast Remote ID Messages into UTM.  It performs this gateway function via a CS-RID SDSP.  A CS-RID Finder could implement, integrate, or accept outputs from a Broadcast RID receiver.  However, it should not depend upon a direct interface with a GCS, Net-RID SP, Net-RID DP or Network RID client.  It would present a new interface to a CS-RID SDSP, similar to but readily distinguishable from that between a GCS and a Net-RID SP.
 
 ## The CS-RID SDSP ## {#csridsdsp}
