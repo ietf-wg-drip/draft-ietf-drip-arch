@@ -12,5 +12,5 @@
 archive.json
 report.xml
 venv/
-lib
+lib/
 draft-ietf-drip-arch.xml

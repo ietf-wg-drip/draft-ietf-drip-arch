@@ -1,7 +1,7 @@
 ---
 title: Drone Remote Identification Protocol (DRIP) Architecture
 abbrev: DRIP Architecture
-docname: draft-ietf-drip-arch-27
+docname: draft-ietf-drip-arch-28
 
 stand_alone: true
 
@@ -410,7 +410,7 @@ This document outlines the DRIP architecture in the context of the UAS RID archi
 
 > * Mechanisms to leverage the Domain Name System (DNS {{RFC1034}}), for registering and publishing public and private information (see {{publicinforeg}} and {{privateinforeg}}) as required by REG-1 and REG-2.
 
-> * Specific authentication methods and message payload formats to enable verification that Broadcast RID messages were sent by the claimed sender ({{driptrust}}) and that the sender is in the claimed registry ({{ei}} and {{driptrust}}) as required by GEN-2.
+> * Specific authentication methods and message payload formats to enable verification that Broadcast RID messages were sent by the claimed sender ({{driptrust}}) and that the sender is in the claimed DIME ({{ei}} and {{driptrust}}) as required by GEN-2.
 
 > * Harvesting Broadcast RID messages for UTM inclusion, with the optional DRIP extension of Crowd Sourced Remote ID (CS-RID, {{harvestbridforutm}}), using the DRIP support for gateways required by GEN-5 {{RFC9153}}.
 
@@ -462,13 +462,13 @@ Certificate:
 
 DRIP Identity Management Entity (DIME):
 
-> An entity that performs functions similar to a domain registrar. A DIME vets Claims and/or Evidence from a registrant and delivers back Endorsements and/or Certificates in response. It is a high level entity in the DRIP registration/provisioning process.
+> An entity that performs functions similar to a domain registrar/registry. A DIME vets Claims and/or Evidence from a registrant and delivers back Endorsements and/or Certificates in response. It is a high-level entity in the DRIP registration/provisioning process that can hold the role of RAA or HDA.
 
 # HHIT as the DRIP Entity Identifier # {#rid}
 
 This section describes the DRIP architectural approach to meeting the basic requirements of a DRIP entity identifier within external technical standard ASTM {{F3411-19}} and regulatory constraints. It justifies and explains the use of Hierarchical Host Identity Tags (HHITs) {{I-D.ietf-drip-rid}} as self-asserting IPv6 addresses suitable as a UAS ID type and, more generally, as trustworthy multipurpose remote identifiers.
 
-Self-asserting in this usage means that given the Host Identity (HI), the HHIT ORCHID construction (see section 3.5 of {{I-D.ietf-drip-rid}}) and a signature of the registry on the HHIT and HI; the HHIT can be verified by the receiver as a trusted UAS ID. The explicit registration hierarchy within the HHIT provides registry discovery (managed by a DRIP Identity Management Entity (DIME)) to either yield the HI for a 3rd-party (seeking UAS ID attestation) validation or prove that the HHIT and HI have been registered uniquely.
+Self-asserting in this usage means that given the Host Identity (HI), the HHIT ORCHID construction (see section 3.5 of {{I-D.ietf-drip-rid}}) and a signature of the DIME on the HHIT and HI; the HHIT can be verified by the receiver as a trusted UAS ID. The explicit registration hierarchy within the HHIT provides registration discovery (managed by a DRIP Identity Management Entity (DIME)) to either yield the HI for a 3rd-party (seeking UAS ID endorsement) validation or prove that the HHIT and HI have been registered uniquely.
 
 ## UAS Remote Identifiers Problem Space ##
 
@@ -484,7 +484,7 @@ The only (known to the authors at the time of this writing) existing types of IP
 
 ## HHIT as A Trustworthy DRIP Entity Identifier ##
 
-A Remote UAS ID that can be trustworthy for use in Broadcast RID can be built from an asymmetric keypair. In this method, the UAS ID is cryptographically derived directly from the public key. The proof of UAS ID ownership (verifiable attestation, versus mere claim) is guaranteed by signing this cryptographic UAS ID with the associated private key. The association between the UAS ID and the private key is ensured by cryptographically binding the public key with the UAS ID; more specifically, the UAS ID results from the hash of the public key. The public key is designated as the HI while the UAS ID is designated as the HIT.
+A Remote UAS ID that can be trustworthy for use in Broadcast RID can be built from an asymmetric keypair. In this method, the UAS ID is cryptographically derived directly from the public key. The proof of UAS ID ownership (verifiable endorsement, versus mere claim) is guaranteed by signing this cryptographic UAS ID with the associated private key. The association between the UAS ID and the private key is ensured by cryptographically binding the public key with the UAS ID; more specifically, the UAS ID results from the hash of the public key. The public key is designated as the HI while the UAS ID is designated as the HIT.
 
 By construction, the HIT is statistically unique through the mandatory use of cryptographic hash functions with second-preimage resistance. The cryptographically-bound addition of the Hierarchy and an HHIT registration process provide complete, global HHIT uniqueness. This registration forces the attacker to generate the same public key rather than a public key that generates the same HHIT. This is in contrast to general IDs (e.g., a UUID or device serial number) as the subject in an X.509 certificate.
 
@@ -496,13 +496,13 @@ Each Observer device functioning with Internet connectivity MAY be provisioned e
 
 HHITs can also be used throughout the USS/UTM system. Operators and Private Information Registries, as well as other UTM entities, can use HHITs for their IDs. Such HHITs can facilitate DRIP security functions such as used with HIP to strongly mutually authenticate and encrypt communications.
 
-A self-attestation of a HHIT used as a UAS ID can be done in as little as 84 bytes when Ed25519 {{RFC8032}} is used by only including the 16-byte HHIT, a 4-byte timestamp, and the 64-byte Ed25519 signature.
+A self-endorsement of a HHIT used as a UAS ID can be done in as little as 84 bytes when Ed25519 {{RFC8032}} is used by only including the 16-byte HHIT, a 4-byte timestamp, and the 64-byte Ed25519 signature.
 
-Ed25519 {{RFC8032}} is used as the HHIT Mandatory to Implement signing algorithm as {{RFC9153}} GEN-1 and ID-5 can best be met by restricting the HI to 32 bytes.  A larger public key would rule out the offline attestation feature that fits within the 200-byte Authentication Message maximum length.  Other algorithms that meet this 32 byte constraint can be added as deemed needed.
+Ed25519 {{RFC8032}} is used as the HHIT Mandatory to Implement signing algorithm as {{RFC9153}} GEN-1 and ID-5 can best be met by restricting the HI to 32 bytes.  A larger public key would rule out the offline endorsement feature that fits within the 200-byte Authentication Message maximum length.  Other algorithms that meet this 32 byte constraint can be added as deemed needed.
 
 A DRIP identifier can be assigned to a UAS as a static HHIT by its manufacturer, such as a single HI and derived HHIT encoded as a hardware serial number per {{CTA2063A}}.  Such a static HHIT SHOULD only be used to bind one-time use DRIP identifiers to the unique UA.  Depending upon implementation, this may leave a HI private key in the possession of the manufacturer (see also {{sc}}).
 
-In general, Internet access may be needed to validate Attestations or Certificates. This may be obviated in the most common cases (e.g., attestation of the UAS ID), even in disconnected environments, by prepopulating small caches on Observer devices with Registry public keys and a chain of Attestations or Certificates (tracing a path through the Registry tree). This is assuming all parties on the trust path also use HHITs for their identities.
+In general, Internet access may be needed to validate Endorsements or Certificates. This may be obviated in the most common cases (e.g., endorsement of the UAS ID), even in disconnected environments, by prepopulating small caches on Observer devices with DIME public keys and a chain of Endorsements or Certificates (tracing a path through the DIME tree). This is assuming all parties on the trust path also use HHITs for their identities.
 
 ## HHIT for DRIP Identifier Registration and Lookup ## {#hhitregandlookup}
 
@@ -510,7 +510,7 @@ UAS RID needs a deterministic lookup mechanism that rapidly provides actionable 
  
 A DRIP registration process based on the explicit hierarchy within a HHIT provides manageable uniqueness of the HI for the HHIT.  The hierarchy is defined in {{I-D.ietf-drip-rid}} and consists of 2-levels, a Registered Assigning Authority (RAA) and then a Hierarchical HIT Domain Authority (HDA). The registration within this hierarchy is the defense against a cryptographic hash second pre-image attack on the HHIT (e.g., multiple HIs yielding the same HHIT, see Requirement ID-3 in {{RFC9153}}). Registration first-come-first served is adequate.
 
-A lookup of the HHIT into the registry data provides the registered HI for HHIT proof of ownership and deterministic access to any other needed actionable information based on inquiry access authority (more details in {{privateinforeg}}).
+A lookup of the HHIT into the DIME provides the registered HI for HHIT proof of ownership and deterministic access to any other needed actionable information based on inquiry access authority (more details in {{privateinforeg}}).
 
 # DRIP Identifier Registration and Registries # {#ei}
 
@@ -520,11 +520,11 @@ DRIP registries hold both public and private UAS information (see PRIV-1 in {{RF
 
 ### Background ###
 
-The public information registry provides trustable information such as attestations of UAS RID ownership and registration with the HDA (Hierarchical HIT Domain Authority). Optionally, pointers to the registries for the HDA and RAA (Registered Assigning Authority) implicit in the UAS RID can be included (e.g., for HDA  and RAA HHIT\|HI used in attestation signing operations).  This public information will be principally used by Observers of Broadcast RID messages.  Data on UASs that only use Network RID, is available via an Observer's Net-RID DP that would directly provide all public registry information. The Net-RID DP is the only source of information for a query on an airspace volume.
+The public information registry provides trustable information such as endorsements of UAS RID ownership and registration with the HDA (Hierarchical HIT Domain Authority). Optionally, pointers to the registries for the HDA and RAA (Registered Assigning Authority) implicit in the UAS RID can be included (e.g., for HDA  and RAA HHIT\|HI used in endorsement signing operations).  This public information will be principally used by Observers of Broadcast RID messages.  Data on UASs that only use Network RID, is available via an Observer's Net-RID DP that would directly provide all public registry information. The Net-RID DP is the only source of information for a query on an airspace volume.
 
 ### Public DRIP Identifier Registry ###
 
-A DRIP identifier MUST be registered as an Internet domain name (at an arbitrary level in the hierarchy, e.g., in .ip6.arpa). Thus DNS can provide all the needed public DRIP information.  A standardized HHIT FQDN (Fully Qualified Domain Name) can deliver the HI via a HIP RR (Resource Record) {{RFC8005}} and other public information (e.g., RAA and HDA PTRs, and HIP RVS (Rendezvous Servers) {{RFC8004}}). These public information registries can use DNSSEC to deliver public information that is not inherently trustable (e.g., everything other than attestations).
+A DRIP identifier MUST be registered as an Internet domain name (at an arbitrary level in the hierarchy, e.g., in .ip6.arpa). Thus DNS can provide all the needed public DRIP information.  A standardized HHIT FQDN (Fully Qualified Domain Name) can deliver the HI via a HIP RR (Resource Record) {{RFC8005}} and other public information (e.g., RAA and HDA PTRs, and HIP RVS (Rendezvous Servers) {{RFC8004}}). These public information registries can use DNSSEC to deliver public information that is not inherently trustable (e.g., everything other than endorsements).
 
 This DNS entry for the HHIT can also provide a revocation service.  For example,
 instead of returning the HI RR it may return some record showing that the HI
@@ -550,7 +550,7 @@ While the DRIP entity identifier is self-asserting, it alone does not provide th
 
 The severe constraints of Broadcast RID make it challenging to satisfy UAS RID requirements. From received Broadcast RID messages and information that can be looked up using the received UAS ID in online registries or local caches, it is possible to establish levels of trust in the asserted information and the Operator.
 
-Optimization of different DRIP Authentication Messages allows an Observer, without Internet connection (offline) or with (online), to be able to validate a UAS DRIP ID in real-time.  First is the sending of messages containing the relevant registration of the UA's DRIP ID in the claimed Registry.  Next is sending messages that sign over both static (e.g., above registration) and dynamically changing data (such as UA location data).  Combining these two sets of information, an Observer can piece together a chain of trust and real-time evidence to make their determination of the UA's claims.
+Optimization of different DRIP Authentication Messages allows an Observer, without Internet connection (offline) or with (online), to be able to validate a UAS DRIP ID in real-time.  First is the sending of messages containing the relevant registration of the UA's DRIP ID in the claimed DIME.  Next is sending messages that sign over both static (e.g., above registration) and dynamically changing data (such as UA location data).  Combining these two sets of information, an Observer can piece together a chain of trust and real-time evidence to make their determination of the UA's claims.
 
 This process (combining the DRIP entity identifier, Registries and Authentication Formats for Broadcast RID) can satisfy the following DRIP requirement defined in {{RFC9153}}: GEN-1, GEN-2, GEN-3, ID-2, ID-3, ID-4 and ID-5.
 
@@ -588,7 +588,7 @@ A CS-RID SDSP aggregates and processes (e.g., estimates UA location using multil
 
 One of the ways in which DRIP can enhance {{F3411-19}} with immediately actionable information is by enabling an Observer to instantly initiate secure communications with the UAS remote pilot, Pilot In Command, operator, USS under which the operation is being flown, or other entity potentially able to furnish further information regarding the operation and its intent and/or to immediately influence further conduct or termination of the operation (e.g., land or otherwise exit an airspace volume). Such potentially distracting communications demand strong "AAA" (Authentication, Attestation, Authorization, Access Control, Accounting, Attribution, Audit) per applicable policies (e.g., of the cognizant CAA). 
 
-A DRIP entity identifier based on a HHIT as outlined in {{rid}} embeds an identifier of the registry in which it can be found (expected typically to be the USS under which the UAS is flying) and the procedures outlined in {{driptrust}} enable Observer verification of that relationship. A DRIP entity identifier with suitable records in public and private registries as outlined in Section 5 can enable lookup not only of information regarding the UAS, but also identities of and pointers to information regarding the various associated entities (e.g., the USS under which the UAS is flying an operation), including means of contacting those associated entities (i.e., locators, typically IP addresses). 
+A DRIP entity identifier based on a HHIT as outlined in {{rid}} embeds an identifier of the DIME in which it can be found (expected typically to be the USS under which the UAS is flying) and the procedures outlined in {{driptrust}} enable Observer verification of that relationship. A DRIP entity identifier with suitable records in public and private registries as outlined in Section 5 can enable lookup not only of information regarding the UAS, but also identities of and pointers to information regarding the various associated entities (e.g., the USS under which the UAS is flying an operation), including means of contacting those associated entities (i.e., locators, typically IP addresses). 
 
 A suitably equipped Observer could initiate a secure communication channel, using the DET HI, to a similarly equipped and identified entity: the UA itself, if operating autonomously; the GCS, if the UA is remotely piloted and the necessary records have been populated in DNS; the USS, etc. Assuming secure communication setup (e.g. via IPsec or HIP), arbitrary standard higher layer protocols can then be used for Observer to Pilot (O2P) communications (e.g., SIP {{RFC3261}} et seq), V2X communications (e.g., {{MAVLink}}), etc. Certain preconditions are necessary: each party needs a currently usable means (typically DNS) of resolving the other party's DRIP entity identifier to a currently usable locator (IP address); and there must be currently usable bidirectional IP (not necessarily Internet) connectivity between the parties.  One method directly supported by the use of HHITs as DRIP entity identifiers is initiation of a HIP Base Exchange (BEX) and Bound End-to-End Tunnel (BEET).
 
@@ -596,9 +596,9 @@ This approach satisfies DRIP requirement GEN-6 Contact, supports satisfaction of
 
 # Security Considerations # {#sc}
 
-The size of the public key hash in the HHIT is vulnerable to a second-image attack. It is well within current server array technology to compute another key pair that hashes to the same HHIT. Thus, if a receiver were to check HHIT validity only by verifying that the received HI and associated information, when hashed in the ORCHID construction, reproduce the received HHIT, an adversary could impersonate a validly registered UA. To defend against this, on-line receivers should verify the received HHIT and received HI with the USS with which the HHIT purports to be registered. On-line and off-line receivers can use a chain of received DRIP link attestations from a root of trust through the RAA and the HDA to the UA, as described, in {{I-D.ietf-drip-auth}} and {{I-D.ietf-drip-registries}}.
+The size of the public key hash in the HHIT is vulnerable to a second-image attack. It is well within current server array technology to compute another key pair that hashes to the same HHIT. Thus, if a receiver were to check HHIT validity only by verifying that the received HI and associated information, when hashed in the ORCHID construction, reproduce the received HHIT, an adversary could impersonate a validly registered UA. To defend against this, on-line receivers should verify the received HHIT and received HI with the USS with which the HHIT purports to be registered. On-line and off-line receivers can use a chain of received DRIP link endorsements from a root of trust through the RAA and the HDA to the UA, as described, in {{I-D.ietf-drip-auth}} and {{I-D.ietf-drip-registries}}.
 
-Compromise of a registry private key could do widespread harm {{I-D.ietf-drip-registries}}. In particular, it would allow bad actors to impersonate trusted members of said registry. Key revocation procedures are as yet to be determined. These risks are in addition to those involving Operator key management practices and will be addressed as part of the registry process.
+Compromise of a DIME private key could do widespread harm {{I-D.ietf-drip-registries}}. In particular, it would allow bad actors to impersonate trusted members of said DIME. Key revocation procedures are as yet to be determined. These risks are in addition to those involving Operator key management practices and will be addressed as part of the DIME process.
 
 ## Private Key Physical Security ##
 
