@@ -1,7 +1,7 @@
 ---
 title: Drone Remote Identification Protocol (DRIP) Architecture
 abbrev: DRIP Architecture
-docname: draft-ietf-drip-arch-28
+docname: draft-ietf-drip-arch-29
 
 stand_alone: true
 
@@ -496,7 +496,7 @@ Each Observer device functioning with Internet connectivity MAY be provisioned e
 
 HHITs can also be used throughout the USS/UTM system. Operators and Private Information Registries, as well as other UTM entities, can use HHITs for their IDs. Such HHITs can facilitate DRIP security functions such as used with HIP to strongly mutually authenticate and encrypt communications.
 
-A self-endorsement of a HHIT used as a UAS ID can be done in as little as 84 bytes when Ed25519 {{RFC8032}} is used by only including the 16-byte HHIT, a 4-byte timestamp, and the 64-byte Ed25519 signature.
+A self-endorsement of a HHIT used as a UAS ID can be done in as little as 88-bytes when Ed25519 {{RFC8032}} is used by only including the 16-byte HHIT, two 4-byte timestamps, and the 64-byte Ed25519 signature.
 
 Ed25519 {{RFC8032}} is used as the HHIT Mandatory to Implement signing algorithm as {{RFC9153}} GEN-1 and ID-5 can best be met by restricting the HI to 32 bytes.  A larger public key would rule out the offline endorsement feature that fits within the 200-byte Authentication Message maximum length.  Other algorithms that meet this 32 byte constraint can be added as deemed needed.
 
@@ -596,9 +596,9 @@ This approach satisfies DRIP requirement GEN-6 Contact, supports satisfaction of
 
 # Security Considerations # {#sc}
 
-The size of the public key hash in the HHIT is vulnerable to a second-image attack. It is well within current server array technology to compute another key pair that hashes to the same HHIT. Thus, if a receiver were to check HHIT validity only by verifying that the received HI and associated information, when hashed in the ORCHID construction, reproduce the received HHIT, an adversary could impersonate a validly registered UA. To defend against this, on-line receivers should verify the received HHIT and received HI with the USS with which the HHIT purports to be registered. On-line and off-line receivers can use a chain of received DRIP link endorsements from a root of trust through the RAA and the HDA to the UA, as described, in {{I-D.ietf-drip-auth}} and {{I-D.ietf-drip-registries}}.
+The size of the public key hash in the HHIT is vulnerable to a second preimage attack. It is well within current server array technology to compute another key pair that hashes to the same HHIT. Thus, if a receiver were to check HHIT validity only by verifying that the received HI and associated information, when hashed in the ORCHID construction, reproduce the received HHIT, an adversary could impersonate a validly registered UA. To defend against this, on-line receivers should verify the received HHIT and received HI with the USS with which the HHIT purports to be registered. On-line and off-line receivers can use a chain of received DRIP link endorsements from a root of trust through the RAA and the HDA to the UA, as described, in {{I-D.ietf-drip-auth}} and {{I-D.ietf-drip-registries}}.
 
-Compromise of a DIME private key could do widespread harm {{I-D.ietf-drip-registries}}. In particular, it would allow bad actors to impersonate trusted members of said DIME. Key revocation procedures are as yet to be determined. These risks are in addition to those involving Operator key management practices and will be addressed as part of the DIME process.
+Compromise of a DIME private key could do widespread harm {{I-D.ietf-drip-registries}}. In particular, it would allow bad actors to impersonate trusted members of said DIME. These risks are in addition to those involving key management practices and will be addressed as part of the DIME process. All DRIP public keys can be found in DNS thus they can be revoked in DNS and users SHOULD check DNS when available. Specific key revocation procedures are as yet to be determined.
 
 ## Private Key Physical Security ##
 
