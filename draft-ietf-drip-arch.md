@@ -1,7 +1,7 @@
 ---
 title: Drone Remote Identification Protocol (DRIP) Architecture
 abbrev: DRIP Architecture
-docname: draft-ietf-drip-arch-29
+docname: draft-ietf-drip-arch-30
 
 stand_alone: true
 
