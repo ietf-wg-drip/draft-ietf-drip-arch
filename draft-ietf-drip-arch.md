@@ -6,7 +6,7 @@ docname: draft-ietf-drip-arch-29
 stand_alone: true
 
 ipr: trust200902
-area: ART
+area: INT
 wg: drip
 kw: Internet-Draft
 cat: info
@@ -62,26 +62,11 @@ author:
         email: gurtov@acm.org
 normative:
 
-  RFC9153: drip-requirements
-  
   RFC2119:
   RFC8174:
-  RFC9153:
-  
+ 
+  RFC9153: drip-requirements
 
-informative:
-  I-D.ietf-rats-architecture: rats-arch
-  I-D.ietf-drip-auth: drip-authentication
-  RFC7480:
-  RFC8032:
-  RFC9082:
-  F3411-19:
-    title: Standard Specification for Remote ID and Tracking
-    author:
-      -
-        org: ASTM International
-    target: http://www.astm.org/cgi-bin/resolver.cgi?F3411
-    date: February 2020
   F3411-22a:
     title: Standard Specification for Remote ID and Tracking
     author:
@@ -89,6 +74,43 @@ informative:
         org: ASTM International
     target: https://www.astm.org/f3411-22a.html
     date: July 2022
+
+informative:
+
+  I-D.ietf-rats-architecture: rats-arch
+  I-D.ietf-drip-auth: drip-authentication
+  I-D.ietf-drip-registries: drip-registries
+  I-D.ietf-drip-rid: drip-entity-tag
+
+  RFC1034:
+  RFC3261:
+  RFC3972:
+  RFC5730:
+  RFC7033:
+  RFC7401:
+  RFC7480:
+  RFC8004:
+  RFC8005:
+  RFC8032:
+  RFC9082:
+  RFC9083:
+  RFC9224:
+
+  F3586:
+    title: Standard Practice for Remote ID Means of Compliance to Federal Aviation Administration Regulation 14 CFR Part 89
+    author:
+      -
+        org: ASTM International
+    target: https://www.astm.org/f3586-22.html
+    date: July 2022
+
+  MOC-NOA:
+    title: Accepted Means of Compliance; Remote Identification of Unmanned Aircraft 
+    author:
+      -
+        org: United States Federal Aviation Administration (FAA)
+    target: https://www.regulations.gov/document/FAA-2022-0859-0001
+    date: August 2022
 
   CTA2063A:
     title: Small Unmanned Aerial Systems Serial Numbers
@@ -135,12 +157,14 @@ informative:
       -
         org: United States Federal Aviation Administration (FAA)
     target: https://www.faa.gov/uas/programs_partnerships/data_exchange/
+
   NPRM:
     title: Notice of Proposed Rule Making on Remote Identification of Unmanned Aircraft Systems
     author:
       -
         org: United States Federal Aviation Administration (FAA)
     date: 2019
+
   TS-22.825: 
     title: Study on Remote Identification of Unmanned Aerial Systems (UAS)
     author: 
@@ -148,6 +172,7 @@ informative:
         org: 3GPP
     target: https://portal.3gpp.org/desktopmodules/Specifications/SpecificationDetails.aspx?specificationId=3527
     date: 2018
+
   TR-23.755: 
     title: Study on application layer support for Unmanned Aerial Systems (UAS) (Release 17)
     author: 
@@ -155,6 +180,7 @@ informative:
         org: 3GPP
     target: https://portal.3gpp.org/desktopmodules/Specifications/SpecificationDetails.aspx?specificationId=3588
     date: 2019
+
   TS-23.255: 
     title: Application layer support for Uncrewed Aerial System (UAS) Functional architecture and information flows; (Release 17)
     author: 
@@ -186,40 +212,26 @@ informative:
         org: United States Federal Aviation Administration (FAA)
     target: https://www.faa.gov/uas/research_development/traffic_management/media/UTM_ConOps_v2.pdf
     date: 2020
+
   MAVLink:
     title: Micro Air Vehicle Communication Protocol
     target: http://mavlink.io/
     date: 2021
+
   FS_AEUA:
     title: Study of Further Architecture Enhancement for UAV and UAM
     target: https://www.3gpp.org/ftp/tsg_sa/WG2_Arch/TSGS2_147E_Electronic_2021-10/Docs/S2-2107092.zip
     date: 2021
-  
-  RFC7033:
-  RFC7401:
-  RFC9224:
-  RFC8004:
-  RFC1034:
-  RFC5730:
-  RFC3972:
-  RFC8005:
-  RFC9083:
-  RFC3261:
-  I-D.ietf-drip-registries:
-
-  I-D.ietf-drip-rid:
 
 --- abstract
 
-This document describes an architecture for protocols and services to
-support Unmanned Aircraft System (UAS) Remote Identification (RID) and tracking, plus UAS RID-related communications. This architecture adheres to the requirements listed in the DRIP Requirements document (RFC9153).
+This document describes an architecture for protocols and services to support Unmanned Aircraft System (UAS) Remote Identification (RID) and tracking, plus UAS RID-related communications. This architecture adheres to the requirements listed in the DRIP Requirements document (RFC9153).
 
 --- middle
 
 # Introduction #        {#introduction}
 
-This document describes an architecture for protocols and services to
-support Unmanned Aircraft System (UAS) Remote Identification (RID) and tracking, plus RID-related communications. The architecture takes into account both current (including proposed) regulations and non-IETF technical standards.
+This document describes an architecture for protocols and services to support Unmanned Aircraft System (UAS) Remote Identification (RID) and tracking, plus RID-related communications. The architecture takes into account both current (including proposed) regulations and non-IETF technical standards.
 
 The architecture adheres to the requirements listed in the DRIP Requirements document {{RFC9153}}. The requirements document provides an extended introduction to the problem space and use cases. Further, this architecture document frames the DRIP Entity Tag (DET) {{I-D.ietf-drip-rid}} within the architecture.
 
@@ -239,12 +251,9 @@ European Union Aviation Safety Agency (EASA)
 
  American Society for Testing and Materials (ASTM)
 
-> ASTM International, Technical Committee F38 (UAS), Subcommittee F38.02 (Aircraft Operations), Work Item WK65041, developed the ASTM {{F3411-19}} Standard Specification for Remote ID and Tracking.
+> ASTM International, Technical Committee F38 (UAS), Subcommittee F38.02 (Aircraft Operations), Work Item WK65041, developed the ASTM {{F3411-22a}} Standard Specification for Remote ID and Tracking.
 
-> ASTM defines one set of UAS RID information and two means, MAC-layer
-broadcast and IP-layer network, of communicating it.  If an UAS uses 
-both communication methods, the same information must be
-provided via both means. {{F3411-19}} is cited by the FAA in its UAS RID final rule {{FAA_RID}} as "a potential means of compliance" to a Remote ID rule.
+> ASTM defines one set of UAS RID information and two means, MAC-layer broadcast and IP-layer network, of communicating it.  If an UAS uses both communication methods, the same information must be provided via both means. {{F3411-22a}} is the technical standard basis of the {{F3586-22a}} "Means Of Compliance" (MOC) accepted by the FAA as per {{MOC-NOA}} to the FAA's UAS RID final rule {{FAA_RID}} and is expected to be accepted by some other CAAs.
 
 
 The 3rd Generation Partnership Project (3GPP)
@@ -253,12 +262,11 @@ The 3rd Generation Partnership Project (3GPP)
 
 ## Overview of Types of UAS Remote ID ## 
 
-This specification introduces two types of UAS Remote ID defined in ASTM {{F3411-19}}. 
+This specification introduces two types of UAS Remote ID defined in ASTM {{F3411-22a}}. 
 
 ### Broadcast RID ### {#brid}
 
-{{F3411-19}} defines a set of UAS RID messages for direct, one-way, broadcast
-transmissions from the UA over Bluetooth or Wi-Fi.  These are currently defined as MAC-Layer messages. Internet (or other Wide Area Network) connectivity is only needed for UAS registry information lookup by Observers using the directly received UAS ID.  Broadcast RID should be functionally usable in situations with no Internet connectivity.
+{{F3411-22a}} defines a set of UAS RID messages for direct, one-way, broadcast transmissions from the UA over Bluetooth or Wi-Fi.  These are currently defined as MAC-Layer messages. Internet (or other Wide Area Network) connectivity is only needed for UAS registry information lookup by Observers using the directly received UAS ID.  Broadcast RID should be functionally usable in situations with no Internet connectivity.
 
 The minimum Broadcast RID data flow is illustrated in {{brid-fig}}.
 
@@ -280,7 +288,7 @@ Broadcast RID provides information only about unmanned aircraft (UA) within dire
 
 ### Network RID ### {#nrid}
 
-{{F3411-19}}, using the same data dictionary that is the basis of Broadcast RID messages, defines a Network Remote Identification (Net-RID) data flow as follows.
+{{F3411-22a}}, using the same data dictionary that is the basis of Broadcast RID messages, defines a Network Remote Identification (Net-RID) data flow as follows.
 
 * The information to be reported via UAS RID is generated by the UAS. Typically some of this data is generated by the UA and some by the GCS (Ground Control Station), e.g., their respective Global Navigation Satellite System (GNSS) derived locations.
 
@@ -327,11 +335,11 @@ Command and Control (C2) must flow from the GCS to the UA via some path. Current
 
 Telemetry (at least the UA's position and heading) flows from the UA to the GCS via some path, typically the reverse of the C2 path. Thus, UAS RID information pertaining to both the GCS and the UA can be sent, by whichever has Internet connectivity, to the Net-RID SP, typically the USS managing the UAS operation.
 
-The Net-RID SP forwards UAS RID information via the Internet to subscribed Net-RID DPs, typically USSs. Subscribed Net-RID DPs then forward RID information via the Internet to subscribed Observer devices. Regulations require and {{F3411-19}} describes UAS RID data elements that must be transported end-to-end from the UAS to the subscribed Observer devices.
+The Net-RID SP forwards UAS RID information via the Internet to subscribed Net-RID DPs, typically USSs. Subscribed Net-RID DPs then forward RID information via the Internet to subscribed Observer devices. Regulations require and {{F3411-22a}} describes UAS RID data elements that must be transported end-to-end from the UAS to the subscribed Observer devices.
 
-{{F3411-19}} prescribes the protocols between the Net-RID SP, Net-RID DP, and the DSS.  It also prescribes data elements (in JSON) between the Observer and the Net-RID DP. DRIP could address standardization of secure protocols between the UA and GCS (over direct wireless and Internet connection), between the UAS and the Net-RID SP, and/or between the Net-RID DP and Observer devices.
+{{F3411-2a}} prescribes the protocols between the Net-RID SP, Net-RID DP, and the DSS.  It also prescribes data elements (in JSON) between the Observer and the Net-RID DP. DRIP could address standardization of secure protocols between the UA and GCS (over direct wireless and Internet connection), between the UAS and the Net-RID SP, and/or between the Net-RID DP and Observer devices.
 
->> Informative note: Neither link layer protocols nor the use of links (e.g., the link often existing between the GCS and the UA) for any purpose other than carriage of UAS RID information is in the scope of {{F3411-19}} Network RID.
+>> Informative note: Neither link layer protocols nor the use of links (e.g., the link often existing between the GCS and the UA) for any purpose other than carriage of UAS RID information is in the scope of {{F3411-22a}} Network RID.
 
 ## Overview of USS Interoperability ## 
 
@@ -402,11 +410,11 @@ V2V:  Vehicle-to-Vehicle
 
 > Informative note: see {{RFC9153}} for detailed definitions. 
 
-DRIP is meant to leverage existing Internet resources (standard protocols, services, infrastructures, and business models) to meet UAS RID and closely related needs.  DRIP will specify how to apply IETF standards, complementing {{F3411-19}} and other external standards, to satisfy UAS RID requirements.
+DRIP is meant to leverage existing Internet resources (standard protocols, services, infrastructures, and business models) to meet UAS RID and closely related needs.  DRIP will specify how to apply IETF standards, complementing {{F3411-22a}} and other external standards, to satisfy UAS RID requirements.
 
-This document outlines the DRIP architecture in the context of the UAS RID architecture.  This includes closing the gaps between the CAAs' Concepts of Operations and {{F3411-19}} as it relates to the use of Internet technologies and UA direct RF communications. Issues include, but are not limited to:
+This document outlines the DRIP architecture in the context of the UAS RID architecture.  This includes closing the gaps between the CAAs' Concepts of Operations and {{F3411-22a}} as it relates to the use of Internet technologies and UA direct RF communications. Issues include, but are not limited to:
 
-> * Design of trustworthy remote identifiers required by GEN-1 ({{rid}}).
+> * Design of trustworthy remote identifiers required by GEN-1 ({{rid}}), especially but not exclusively for use as single-use session IDs.
 
 > * Mechanisms to leverage the Domain Name System (DNS {{RFC1034}}), for registering and publishing public and private information (see {{publicinforeg}} and {{privateinforeg}}) as required by REG-1 and REG-2.
 
@@ -417,6 +425,8 @@ This document outlines the DRIP architecture in the context of the UAS RID archi
 > * Methods for instantly establishing secure communications between an Observer and the pilot of an observed UAS ({{dripcontact}}), using the DRIP support for dynamic contact required by GEN-4 {{RFC9153}}.
 
 > * Privacy in UAS RID messages (PII protection) ({{privacyforbrid}}).
+>
+> This document should serve as a single point of entry into the set of IETF documents addressing the basic DRIP requirements.
 
 # Terms and Definitions #
 
@@ -466,7 +476,7 @@ DRIP Identity Management Entity (DIME):
 
 # HHIT as the DRIP Entity Identifier # {#rid}
 
-This section describes the DRIP architectural approach to meeting the basic requirements of a DRIP entity identifier within external technical standard ASTM {{F3411-19}} and regulatory constraints. It justifies and explains the use of Hierarchical Host Identity Tags (HHITs) {{I-D.ietf-drip-rid}} as self-asserting IPv6 addresses suitable as a UAS ID type and, more generally, as trustworthy multipurpose remote identifiers.
+This section describes the DRIP architectural approach to meeting the basic requirements of a DRIP entity identifier within external technical standard ASTM {{F3411-22a}} and regulatory constraints. It justifies and explains the use of Hierarchical Host Identity Tags (HHITs) {{I-D.ietf-drip-rid}} as self-asserting IPv6 addresses suitable as a UAS ID type and, more generally, as trustworthy multipurpose remote identifiers.
 
 Self-asserting in this usage means that given the Host Identity (HI), the HHIT ORCHID construction (see section 3.5 of {{I-D.ietf-drip-rid}}) and a signature of the DIME on the HHIT and HI; the HHIT can be verified by the receiver as a trusted UAS ID. The explicit registration hierarchy within the HHIT provides registration discovery (managed by a DRIP Identity Management Entity (DIME)) to either yield the HI for a 3rd-party (seeking UAS ID endorsement) validation or prove that the HHIT and HI have been registered uniquely.
 
@@ -474,9 +484,9 @@ Self-asserting in this usage means that given the Host Identity (HI), the HHIT O
 
 A DRIP entity identifier needs to be "Trustworthy" (see DRIP Requirement GEN-1, ID-4 and ID-5 in {{RFC9153}}). This means that given a sufficient collection of UAS RID messages, an Observer can establish that the identifier claimed therein uniquely belongs to the claimant. To satisfy DRIP requirements and maintain important security properties, the DRIP identifier should be self-generated by the entity it names (e.g., a UAS) and registered (e.g., with a USS, see Requirements GEN-3 and ID-2).
 
-However the Broadcast RID, especially its support for Bluetooth 4.x, imposes severe constraints. The ASTM UAS RID {{F3411-19}} allows a UAS ID of types 1, 2 and 3 of 20 bytes. {{F3411-22a}} add an additional type 4 (Specific Session ID). Type 4 uses one byte to index the Specific Session ID (leaving 19 bytes, see ID-1 of DRIP Requirement {{RFC9153}}); Specific Session ID of value 1 is allocated to IETF DRIP by ASTM.  This new Specific Session ID will be standardized by IETF and other standards development organizations (SDOs) as extensions to ASTM UAS RID.
+However Broadcast RID, especially its support for Bluetooth 4.x, imposes severe constraints. The previous revision of ASTM UAS RID, F3411-19, allowed a UAS ID of types 1, 2 and 3, each of 20 bytes. {{F3411-22a}} added type 4, Specific Session ID, for other standards development organizations (SDOs) to extend ASTM UAS RID. Type 4 uses one byte to index the Specific Session ID sub-type, leaving 19 bytes (see ID-1 of DRIP Requirement {{RFC9153}}). ASTM has allocated Specific Session ID sub-type 1 to IETF DRIP.
 
-Likewise, the maximum ASTM UAS RID {{F3411-19}} Authentication Message payload is 201 bytes for most authentication types. A type 5 is also added in this revision for IETF and other SDOs to develop Specific Authentication Methods as extensions to ASTM UAS RID. One byte out of 201 bytes is consumed to index the sub-type which leaves only 200 for DRIP authentication payloads, including one or more DRIP entity identifiers and associated authentication data.
+The maximum ASTM UAS RID Authentication Message payload is 201 bytes each for authentication types 1, 2, 3 and 4. {{F3411-22a}} added type 5 for IETF and other SDOs to extend ASTM UAS RID with Specific Authentication Methods (SAM). With type 5, one of the 201 bytes is consumed to index the sub-type, leaving only 200 bytes for DRIP authentication payloads, including one or more DRIP entity identifiers and associated authentication data.
 
 ## HHIT as a Cryptographic Identifier ## 
 
@@ -578,15 +588,15 @@ This approach satisfies the following DRIP requirements defined in {{RFC9153}}: 
 
 ## The CS-RID Finder ## {#csridfinder}
 
-A CS-RID Finder is the gateway for Broadcast Remote ID Messages into UTM.  It performs this gateway function via a CS-RID SDSP.  A CS-RID Finder could implement, integrate, or accept outputs from a Broadcast RID receiver.  However, it should not depend upon a direct interface with a GCS, Net-RID SP, Net-RID DP or Network RID client.  It would present a new interface to a CS-RID SDSP, similar to but readily distinguishable from that between a GCS and a Net-RID SP.
+A CS-RID Finder is the gateway for Broadcast Remote ID Messages into UTM.  It performs this gateway function via a CS-RID SDSP.  A CS-RID Finder could implement, integrate, or accept outputs from a Broadcast RID receiver.  However, it should not depend upon a direct interface with a GCS, Net-RID SP, Net-RID DP or Net-RID client.  It would present a new interface to a CS-RID SDSP, similar to but readily distinguishable from that which a UAS (UA or GCS) presents to a Net-RID SP.
 
 ## The CS-RID SDSP ## {#csridsdsp}
 
-A CS-RID SDSP aggregates and processes (e.g., estimates UA location using multilateration when possible) information collected by CS-RID Finders. A CS-RID SDSP should appear (i.e., present the same interface) to a Net-RID SP as a Net-RID DP and to a Net-RID DP like a Net-RID SP but be readily distinguishable with its data source.  
+A CS-RID SDSP aggregates and processes (e.g., estimates UA location using multilateration when possible) information collected by CS-RID Finders. A CS-RID SDSP should present the same interface to a Net-RID SP as does a Net-RID DP and to a Net-RID DP as does a Net-RID SP, but its data source must be readily distinguishable as via Finders rather than direct from the UAS itself.  
 
 # DRIP Contact # {#dripcontact}
 
-One of the ways in which DRIP can enhance {{F3411-19}} with immediately actionable information is by enabling an Observer to instantly initiate secure communications with the UAS remote pilot, Pilot In Command, operator, USS under which the operation is being flown, or other entity potentially able to furnish further information regarding the operation and its intent and/or to immediately influence further conduct or termination of the operation (e.g., land or otherwise exit an airspace volume). Such potentially distracting communications demand strong "AAA" (Authentication, Attestation, Authorization, Access Control, Accounting, Attribution, Audit) per applicable policies (e.g., of the cognizant CAA). 
+One of the ways in which DRIP can enhance {{F3411-22a}} with immediately actionable information is by enabling an Observer to instantly initiate secure communications with the UAS remote pilot, Pilot In Command, operator, USS under which the operation is being flown, or other entity potentially able to furnish further information regarding the operation and its intent and/or to immediately influence further conduct or termination of the operation (e.g., land or otherwise exit an airspace volume). Such potentially distracting communications demand strong "AAA" (Authentication, Attestation, Authorization, Access Control, Accounting, Attribution, Audit) per applicable policies (e.g., of the cognizant CAA). 
 
 A DRIP entity identifier based on a HHIT as outlined in {{rid}} embeds an identifier of the DIME in which it can be found (expected typically to be the USS under which the UAS is flying) and the procedures outlined in {{driptrust}} enable Observer verification of that relationship. A DRIP entity identifier with suitable records in public and private registries as outlined in Section 5 can enable lookup not only of information regarding the UAS, but also identities of and pointers to information regarding the various associated entities (e.g., the USS under which the UAS is flying an operation), including means of contacting those associated entities (i.e., locators, typically IP addresses). 
 
@@ -695,5 +705,5 @@ Acknowledgments
 ================
 {: numbered="no"}
 
-The work of the FAA's UAS Identification and Tracking (UAS ID) Aviation Rulemaking Committee (ARC) is the foundation of later ASTM and proposed IETF DRIP WG efforts.  The work of ASTM F38.02 in balancing the interests of diverse stakeholders is essential to the necessary rapid and widespread deployment of UAS RID. Thanks to Alexandre Petrescu and Stephan Wenger for the helpful and positive comments. Thanks to chairs Daniel Migault and Mohamed Boucadair for direction of our team of authors and editor, some of whom are newcomers to writing IETF documents. Laura Welch is also thanked for her valuable review comments that led to great improvements of this memo.  Thanks especially to Internet Area Director Eric Vyncke for guidance and support.
+The work of the FAA's UAS Identification and Tracking (UAS ID) Aviation Rulemaking Committee (ARC) is the foundation of later ASTM and IETF DRIP WG efforts.  The work of ASTM F38.02 in balancing the interests of diverse stakeholders is essential to the necessary rapid and widespread deployment of UAS RID. Thanks to Dave Thaler for showing our authors how to leverage the RATS model for attestation in DRIP. Thanks to Alexandre Petrescu and Stephan Wenger for the helpful and positive comments and to Laura Welch for her assistance greatly improving this document. Thanks to chairs Daniel Migault and Mohamed Boucadair for direction of our team of authors and editor, some of whom are newcomers to writing IETF documents.  Thanks especially to Internet Area Director Eric Vyncke for guidance and support.
  
