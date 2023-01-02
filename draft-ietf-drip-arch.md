@@ -96,7 +96,7 @@ informative:
   RFC9083:
   RFC9224:
 
-  F3586:
+  F3586-22:
     title: Standard Practice for Remote ID Means of Compliance to Federal Aviation Administration Regulation 14 CFR Part 89
     author:
       -
@@ -253,7 +253,7 @@ European Union Aviation Safety Agency (EASA)
 
 > ASTM International, Technical Committee F38 (UAS), Subcommittee F38.02 (Aircraft Operations), Work Item WK65041, developed the ASTM {{F3411-22a}} Standard Specification for Remote ID and Tracking.
 
-> ASTM defines one set of UAS RID information and two means, MAC-layer broadcast and IP-layer network, of communicating it.  If an UAS uses both communication methods, the same information must be provided via both means. {{F3411-22a}} is the technical standard basis of the {{F3586-22a}} "Means Of Compliance" (MOC) accepted by the FAA as per {{MOC-NOA}} to the FAA's UAS RID final rule {{FAA_RID}} and is expected to be accepted by some other CAAs.
+> ASTM defines one set of UAS RID information and two means, MAC-layer broadcast and IP-layer network, of communicating it.  If an UAS uses both communication methods, the same information must be provided via both means. {{F3411-22a}} is the technical standard basis of the {{F3586-22}} "Means Of Compliance" (MOC) accepted by the FAA as per {{MOC-NOA}} to the FAA's UAS RID final rule {{FAA_RID}} and is expected to be accepted by some other CAAs.
 
 The 3rd Generation Partnership Project (3GPP)
 
@@ -335,7 +335,7 @@ Telemetry (at least the UA's position and heading) flows from the UA to the GCS 
 
 The Net-RID SP forwards UAS RID information via the Internet to subscribed Net-RID DPs, typically USSs. Subscribed Net-RID DPs then forward RID information via the Internet to subscribed Observer devices. Regulations require and {{F3411-22a}} describes UAS RID data elements that must be transported end-to-end from the UAS to the subscribed Observer devices.
 
-{{F3411-2a}} prescribes the protocols between the Net-RID SP, Net-RID DP, and the DSS.  It also prescribes data elements (in JSON) between the Observer and the Net-RID DP. DRIP could address standardization of secure protocols between the UA and GCS (over direct wireless and Internet connection), between the UAS and the Net-RID SP, and/or between the Net-RID DP and Observer devices.
+{{F3411-22a}} prescribes the protocols between the Net-RID SP, Net-RID DP, and the DSS.  It also prescribes data elements (in JSON) between the Observer and the Net-RID DP. DRIP could address standardization of secure protocols between the UA and GCS (over direct wireless and Internet connection), between the UAS and the Net-RID SP, and/or between the Net-RID DP and Observer devices.
 
 >> Informative note: Neither link layer protocols nor the use of links (e.g., the link often existing between the GCS and the UA) for any purpose other than carriage of UAS RID information is in the scope of {{F3411-22a}} Network RID.
 
