@@ -67,6 +67,8 @@ normative:
  
   RFC9153: drip-requirements
 
+  I-D.ietf-drip-rid: drip-entity-tag
+
   F3411-22a:
     title: Standard Specification for Remote ID and Tracking
     author:
@@ -80,7 +82,6 @@ informative:
   I-D.ietf-rats-architecture: rats-arch
   I-D.ietf-drip-auth: drip-authentication
   I-D.ietf-drip-registries: drip-registries
-  I-D.ietf-drip-rid: drip-entity-tag
 
   RFC1034:
   RFC3261:
@@ -367,7 +368,7 @@ With Net-RID, there is direct communication between each UAS and its USS. Multip
 
 ## Overview of DRIP Architecture ##
 
-{{arch-intro}} illustrates a global UAS RID usage scenario. Broadcast RID links are not shown as they reach from any UA to any listening receiver in range and thus would obscure the intent of the figure. {{arch-intro}} shows, as context, some entities and interfaces beyond the scope of DRIP (as currently (2022) chartered).
+{{arch-intro}} illustrates a global UAS RID usage scenario. Broadcast RID links are not shown as they reach from any UA to any listening receiver in range and thus would obscure the intent of the figure. {{arch-intro}} shows, as context, some entities and interfaces beyond the scope of DRIP (as currently (2022) chartered). Multiple UAS are shown, each with its own UA controlled by its own GCS, potentially using the same or different USS, with the UA potentially communicating directly with each other (V2V) especially for low latency safety related purposes (DAA).
 
 ~~~
 ***************                                        ***************
@@ -470,7 +471,7 @@ Certificate:
 
 DRIP Identity Management Entity (DIME):
 
-> An entity that performs functions similar to a domain registrar/registry. A DIME vets Claims and/or Evidence from a registrant and delivers back Endorsements and/or Certificates in response. It is a high-level entity in the DRIP registration/provisioning process that can hold the role of RAA or HDA.
+> An entity that performs functions similar to a domain registrar/registry. A DIME vets Claims and/or Evidence from a registrant and delivers back Endorsements and/or Certificates in response. It is a high-level entity in the DRIP registration/provisioning process that can hold the role of HDA, RAA or root of trust (likely the HHIT prefix owner and/or DNS apex owner) for DETs.
 
 # HHIT as the DRIP Entity Identifier # {#rid}
 
@@ -490,7 +491,7 @@ The maximum ASTM UAS RID Authentication Message payload is 201 bytes each for au
 
 The only (known to the authors at the time of this writing) existing types of IP address compatible identifiers cryptographically derived from the public keys of the identified entities are Cryptographically Generated Addresses (CGAs) {{RFC3972}} and Host Identity Tags (HITs) {{RFC7401}}.  CGAs and HITs lack registration/retrieval capability. To provide this, each HHIT embeds plaintext information designating the hierarchy within which it is registered and a cryptographic hash of that information concatenated with the entity's public key, etc. Although hash collisions may occur, the DIME can detect them and reject registration requests rather than issue credentials, e.g., by enforcing a first-claimed, first-attested policy. Pre-image hash attacks are also mitigated through this registration process, locking the HHIT to a specific HI.
 
-## HHIT as A Trustworthy DRIP Entity Identifier ##
+## HHIT as A Trustworthy DRIP Entity Identifier ## {#hhittrustworthy}
 
 A Remote UAS ID that can be trustworthy for use in Broadcast RID can be built from an asymmetric keypair. In this method, the UAS ID is cryptographically derived directly from the public key. The proof of UAS ID ownership (verifiable endorsement, versus mere claim) is guaranteed by signing this cryptographic UAS ID with the associated private key. The association between the UAS ID and the private key is ensured by cryptographically binding the public key with the UAS ID; more specifically, the UAS ID results from the hash of the public key. The public key is designated as the HI while the UAS ID is designated as the HIT.
 
@@ -510,7 +511,7 @@ Ed25519 {{RFC8032}} is used as the HHIT Mandatory to Implement signing algorithm
 
 A DRIP identifier can be assigned to a UAS as a static HHIT by its manufacturer, such as a single HI and derived HHIT encoded as a hardware serial number per {{CTA2063A}}.  Such a static HHIT SHOULD only be used to bind one-time use DRIP identifiers to the unique UA.  Depending upon implementation, this may leave a HI private key in the possession of the manufacturer (see also {{sc}}).
 
-In general, Internet access may be needed to validate Endorsements or Certificates. This may be obviated in the most common cases (e.g., endorsement of the UAS ID), even in disconnected environments, by prepopulating small caches on Observer devices with DIME public keys and a chain of Endorsements or Certificates (tracing a path through the DIME tree). This is assuming all parties on the trust path also use HHITs for their identities.
+In general, Internet access may be needed to validate Endorsements or Certificates. This may be obviated in the most common cases (e.g., endorsement of the UAS ID), even in disconnected environments, by pre-populating small caches on Observer devices with DIME public keys and a chain of Endorsements or Certificates (tracing a path through the DIME tree). This is assuming all parties on the trust path also use HHITs for their identities.
 
 ## HHIT for DRIP Identifier Registration and Lookup ## {#hhitregandlookup}
 
@@ -542,21 +543,25 @@ This DNS entry for the HHIT can also provide a revocation service.  For example,
 
 The private information required for DRIP identifiers is similar to that required for Internet domain name registration.  A DRIP identifier solution can leverage existing Internet resources: registration protocols, infrastructure, and business models, by fitting into a UAS ID structure compatible with DNS names.  The HHIT hierarchy can provide the needed scalability and management structure. It is expected that the private information registry function will be provided by the same organizations that run a USS, and likely integrated with a USS.  The lookup function may be implemented by the Net-RID DPs.
 
+### Information Elements ###
+
+When a DET is used as a UA's Session ID, the corresponding manufacturer assigned serial number MUST be stored in a Private Information Registry that can be identified uniquely from the DET. When a DET is used as either as UA's Session ID or as a UA's manufacturer assigned serial number, and the operation is being flown under UTM, the corresponding UTM system assigned Operational Intent Identifier SHOULD be so stored. Other information MAY be so stored, and often must to satisfy CAA regulations or USS operator policies.
+
 ### Private DRIP Identifier Registry Methods ### 
 
 A DRIP private information registry supports essential registry operations (e.g., add, delete, update, query) using interoperable open standard protocols. It can accomplish this by leveraging aspects of Extensible Provisioning Protocol (EPP {{RFC5730}}) and the Registry Data Access Protocol (RDAP {{RFC7480}} {{RFC9082}} {{RFC9083}}).  The DRIP private information registry in which a given UAS is registered needs to be findable, starting from the UAS ID, using the methods specified in {{RFC9224}}.
 
 ### Alternative Private DRIP Registry Methods ###
 
-A DRIP private information registry might be an access-controlled DNS (e.g., via DNS over TLS) or a blockchain.  Additionally, WebFinger {{RFC7033}} can be supported. These alternative methods may be used by Net-RID DP with specific customers.
+A DRIP private information registry might be an access-controlled DNS (e.g., via DNS over TLS) or a distributed ledger (blockchain).  Additionally, WebFinger {{RFC7033}} can be supported. These alternative methods may be used by Net-RID DP with specific customers.
 
 # DRIP Identifier Trust # {#driptrust} 
 
-While the DRIP entity identifier is self-asserting, it alone does not provide the trustworthiness (non-repudiability, protection vs. spoofing, message integrity protection, scalability, etc.) essential to UAS RID, as justified in {{RFC9153}}. For that it MUST be registered (under DRIP Registries) and be actively used by the party (in most cases the UA).  A sender's identity can not be proved by only possessing a DRIP Entity Tag (DET) and broadcasting it as a claim that it belongs to that sender.  Even the sender using that HI's private key to sign static data proves nothing as well, as it is subject to trivial replay attacks.  Only sending the DET and a signature on frequently changing data (which is unpredicatable) that can be externally validated by the Observer (such as a Location/Vector message matching actually seeing the UA at that location) proves that the observed UA possesses the claimed UAS ID.
+While the DRIP entity identifier is self-asserting, it alone does not provide the trustworthiness (non-repudiation, protection vs spoofing, message integrity protection, scalability, etc.) essential to UAS RID, as justified in {{RFC9153}}. For that it MUST be registered (under DRIP Registries) and be actively used by the party (in most cases the UA).  A sender's identity cannot be proved merely by its possessing a DRIP Entity Tag (DET) and broadcasting it as a claim that it belongs to that sender.  Sending data signed using that HI's private key proves little, as it is subject to trivial replay attacks using previously broadcast messages.  Only sending the DET and a signature on frequently changing data that is unpredictable yet can be externally validated by the Observer (such as a signed Location/Vector message, matching actually seeing the UA at the location and time reported in the signed message) proves that the observed UA possesses the private key and thus the claimed UAS ID.
 
 The severe constraints of Broadcast RID make it challenging to satisfy UAS RID requirements. From received Broadcast RID messages and information that can be looked up using the received UAS ID in online registries or local caches, it is possible to establish levels of trust in the asserted information and the Operator.
 
-Optimization of different DRIP Authentication Messages allows an Observer, without Internet connection (offline) or with (online), to be able to validate a UAS DRIP ID in real-time.  First is the sending of messages containing the relevant registration of the UA's DRIP ID in the claimed DIME.  Next is sending messages that sign over both static (e.g., above registration) and dynamically changing data (such as UA location data).  Combining these two sets of information, an Observer can piece together a chain of trust and real-time evidence to make their determination of the UA's claims.
+A combination of different DRIP Authentication Messages enables an Observer, without Internet connection (offline) or with (online), to validate a UAS DRIP ID in real-time.  Some messages must contain the relevant registration of the UA's DRIP ID in the claimed DIME.  Some messages must contain sender signatures over both static (e.g., registration) and dynamically changing (e.g., current UA location) data.  Combining these two sets of information, an Observer can piece together a chain of trust including real-time evidence to make their determination on the UA's claims.
 
 This process (combining the DRIP entity identifier, Registries and Authentication Formats for Broadcast RID) can satisfy the following DRIP requirements defined in {{RFC9153}}: GEN-1, GEN-2, GEN-3, ID-2, ID-3, ID-4 and ID-5.
 
@@ -564,10 +569,9 @@ This process (combining the DRIP entity identifier, Registries and Authenticatio
 
 ASTM anticipated that regulators would require both Broadcast RID and Network RID for large UASs, but allow UAS RID requirements for small UAS to be satisfied with the operator's choice of either Broadcast RID or Network RID.  The EASA initially specified Broadcast RID for essentially all UAS, and is now also considering Network RID.  The FAA UAS RID Final Rules {{FAA_RID}} permit only Broadcast RID for rule compliance, but still encourage Network RID for complementary functionality, especially in support of UTM.
 
-One opportunity is to enhance the architecture with gateways from Broadcast RID to Network RID. This provides the best of both and gives regulators and operators
-flexibility.  It offers advantages over either form of UAS RID alone: greater fidelity than Network RID reporting of planned area operations; surveillance of areas too large for local direct visual observation and direct RF-LOS link based Broadcast RID (e.g., a city or a national forest).
+One opportunity is to enhance the architecture with gateways from Broadcast RID to Network RID. This provides the best of both and gives regulators and operators flexibility.  It offers advantages over either form of UAS RID alone: greater fidelity than Network RID reporting of planned area operations; surveillance of areas too large for local direct visual observation and direct RF-LOS link based Broadcast RID (e.g., a city or a national forest).
 
-These gateways could be pre-positioned (e.g., around airports, public gatherings, and other sensitive areas) and/or crowd-sourced (as nothing more than a smartphone with a suitable app is needed).  As Broadcast RID media have limited range, gateways receiving messages claiming locations far from the gateway can alert authorities or a SDSP to the failed sanity check possibly indicating intent to deceive. Surveillance SDSPs can use messages with precise date/time/position stamps from the gateways to multilaterate UA location, independent of the locations claimed in the messages, which are entirely operator self-reported in UAS RID and UTM, and thus are subject not only to natural time lag and error but also operator misconfiguration or intentional deception.  
+These gateways could be pre-positioned (e.g., around airports, public gatherings, and other sensitive areas) and/or crowd-sourced (as nothing more than a smartphone with a suitable app is needed).  Crowd-sourcing can be encouraged by quid pro quo, providing CS-RID SDSP outputs only to CS-RID Finders. As Broadcast RID media have limited range, gateways receiving messages claiming locations far from the gateway can alert authorities or a SDSP to the failed sanity check possibly indicating intent to deceive. Surveillance SDSPs can use messages with precise date/time/position stamps from the gateways to multilaterate UA location, independent of the locations claimed in the messages, which are entirely operator self-reported in UAS RID and UTM, and thus are subject not only to natural time lag and error but also operator misconfiguration or intentional deception.  
 
 Multilateration technologies use physical layer information, such as precise Time Of Arrival (TOA) of transmissions from mobile transmitters at receivers with a priori precisely known locations, to estimate the locations of the mobile transmitters.
 
@@ -597,7 +601,7 @@ This approach satisfies DRIP requirement GEN-6 Contact, supports satisfaction of
 
 # Security Considerations # {#sc}
 
-The size of the public key hash in the HHIT is vulnerable to a second preimage attack. It is well within current server array technology to compute another key pair that hashes to the same HHIT. Thus, if a receiver were to check HHIT validity only by verifying that the received HI and associated information, when hashed in the ORCHID construction, reproduce the received HHIT, an adversary could impersonate a validly registered UA. To defend against this, on-line receivers should verify the received HHIT and received HI with the USS with which the HHIT purports to be registered. On-line and off-line receivers can use a chain of received DRIP link endorsements from a root of trust through the RAA and the HDA to the UA, as described, in {{I-D.ietf-drip-auth}} and {{I-D.ietf-drip-registries}}.
+The size of the public key hash in the HHIT is vulnerable to a second preimage attack. It is well within current server array technology to compute another key pair that hashes to the same HHIT. Thus, if a receiver were to check HHIT validity only by verifying that the received HI and associated information, when hashed in the ORCHID construction, reproduce the received HHIT, an adversary could impersonate a validly registered UA. To defend against this, online receivers should verify the received HHIT and received HI with the USS with which the HHIT purports to be registered. Online and offline receivers can use a chain of received DRIP link endorsements from a root of trust through the RAA and the HDA to the UA, e.g., as described in {{I-D.ietf-drip-auth}} and {{I-D.ietf-drip-registries}}.
 
 Compromise of a DIME private key could do widespread harm {{I-D.ietf-drip-registries}}. In particular, it would allow bad actors to impersonate trusted members of said DIME. These risks are in addition to those involving key management practices and will be addressed as part of the DIME process. All DRIP public keys can be found in DNS thus they can be revoked in DNS and users SHOULD check DNS when available. Specific key revocation procedures are as yet to be determined.
 
@@ -611,15 +615,23 @@ Since it is possible for the UAS RID sender of a small harmless UA (or the entir
 
 There has been no effort, at this time, to address post quantum computing cryptography.  UAs and Broadcast Remote ID communications are so constrained that current post quantum computing cryptography is not applicable.  Plus since a UA may use a unique HHIT for each operation, the attack window could be limited to the duration of the operation.
 
-One potential use for post quantum cryptography is its use in keypairs that have long usage lives, but rarely if ever need to be transmitted over bandwidth constrained links; such as for Serial Numbers or Operators. Finally, as the HHIT contains the ID for the cryptographic suite used in its creation, a future post quantum computing safe algorithm that fits the Remote ID constraints may readily be added.
+One potential use for post quantum cryptography is for keypairs that have long usage lives, but rarely if ever need to be transmitted over bandwidth constrained links; such as for Serial Numbers or Operators. Finally, as the HHIT contains the ID for the cryptographic suite used in its creation, a future post quantum computing safe algorithm that fits the Remote ID constraints may readily be added.
 
 ## Denial Of Service (DOS) Protection ## 
 
-Remote ID services from the UA use a wireless link in a public space. As such, they are open to many forms of RF jamming. It is trivial for an attacker to stop any UA messages from reaching a wireless receiver. Thus it is pointless to attempt to provide relief from DOS attacks as there is always the ultimate RF jamming attack. Also the DRIP architecture make spoofing/replay attacks, that might be used to attempt DOS, very hard.
+Remote ID services from the UA use a wireless link in a public space. As such, they are open to many forms of RF jamming. It is trivial for an attacker to stop any UA messages from reaching a wireless receiver. Thus it is pointless to attempt to provide relief from DOS attacks as there is always the ultimate RF jamming attack. Also DOS may be attempted with spoofing/replay attacks, for which see {{spoofreplay}}.
+
+## Spoofing & Replay Protection ## {#spoofreplay}
+
+As noted in {{driptrust}}, spoofing is combatted by the intrinsic self-attesting properties of HHITs plus their registration. Also as noted in {{driptrust}}, to combat replay attacks, a receiver MUST NOT trust that an observed UA is that identified in the Basic ID message (i.e. possesses the corresponding private key) until it receives a complete chain of endorsement links from a root of trust to the UA's leaf DET, plus a signed message containing frequently changing unpredictable data (e.g. a Location/Vector message) and verifies all the foregoing.
+
+## Timestamps & Time Sources ##
+
+{{harvestbridforutm}} and more fundamentally {{hhittrustworthy}} both require timestamps. In Broadcast RID messages, {{F3411-22a}} specifies both 32 bit Unix style UTC timestamps (seconds since midnight going into the 1st day of 2019 rather than 1970) and 16 bit relative timestamps (tenths of seconds since the start of the most recent hour or other specified event). {{F3411-22a}} requires that 16 bit timestamp accuracy, relative to the time of applicability of the data being timestamped, also be reported, with a worst allowable case of 1.5 seconds. {{F3411-22a}} does not specify the time source, but GNSS is generally assumed, as latitude, longitude and geodetic altitude must be reported and most small UAS use GNSS for positioning and navigation. {{F3586-22}}, to satisfy {{FAA_RID}}, specifies use of the US Government operated GPS (with its sub-microsecond accuracy but only 1.5 second precision) and tamper protection of the entire UAS RID subsystem. Thus, in messages sourced by the UA, timestamp accuracy and precision each can be assumed to be 1.5 seconds at worst. GCS often have access to cellular LTE or other time sources better than the foregoing, and such better time sources would be required to support multilateration in {{harvestbridforutm}}, but such better time sources cannot be assumed generally for purposes of security analysis.
 
 # Privacy & Transparency Considerations # {#privacyforbrid}
 
-Broadcast RID messages can contain Personally Identifiable Information (PII).  A viable architecture for PII protection would be symmetric encryption of the PII using a session key known to the UAS and its USS. Authorized Observers could obtain plaintext in either of two ways. An Observer can send the UAS ID and the cyphertext to a server that offers decryption as a service. An Observer can send the UAS ID only to a server that returns the session key, so that Observer can directly locally decrypt all cyphertext sent by that UA during that session (UAS operation). In either case, the server can be: a Public Safety USS, the Observer's own USS, or the UA's USS if the latter can be determined (which under DRIP it can be, from the UAS ID itself).  PII can be protected unless the UAS is informed otherwise.  This could come as part of UTM operation authorization. It can be special instructions at the start or during an operation. PII protection MUST NOT be used if the UAS loses connectivity to the USS, as if the UAS loses connectivity chances are Observers also won't have connectivity in the vicinity to enabled decryption of the PII. The UAS always has the option to abort the operation if PII protection is disallowed.
+Broadcast RID messages can contain Personally Identifiable Information (PII) such as the operator ID and in most jurisdictions must contain the pilot/GCS location.  The DRIP architectural approach for PII protection is symmetric encryption of the PII using a session key known to the UAS and its USS, as follows. Authorized Observers obtain plaintext in either of two ways. An Observer can send the UAS ID and the cyphertext to a server that offers decryption as a service. An Observer can send just the UAS ID to a server that returns the session key, so that Observer can directly locally decrypt all cyphertext sent by that UA during that session (UAS operation). In either case, the server can be a Public Safety USS, the Observer's own USS, or the UA's USS if the latter can be determined (which under DRIP it can be, from the UAS ID itself).  PII is protected unless the UAS is otherwise configured: as part of DRIP-enhanced RID subsystem provisioning; as part of UTM operation authorization; or via subsequent authenticated communications from a cognizant authority. PII protection MUST NOT be used if the UAS loses connectivity to its USS, as if the UAS loses connectivity, Observers nearby likely also won't have connectivity enabling decryption of the PII. The UAS always has the option to abort the operation if PII protection is disallowed, but if this occurs during flight, the UA then MUST broadcast the PII without protection until it lands and is powered off. Note that normative language was used only minimally in this section, as privacy protection requires refinement of the DRIP architecture and specification of interoperable protocol extensions, which are left for future DRIP documents.
 
 --- back
 
