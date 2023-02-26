@@ -435,7 +435,7 @@ To encourage comprehension necessary for adoption of DRIP by the intended user c
 
 This document uses terms defined in {{RFC9153}}.
 
-Some of the acronyms have plural forms that remain the same as their singular forms, e.g., UAS can expand to Unmanned Aircraft System (singular) or Unmanned Aircraft Systems (plural), as appropriate for the context. 
+Some of the acronyms have plural forms that remain the same as their singular forms, e.g., UAS can expand to Unmanned Aircraft System (singular) or Unmanned Aircraft Systems (plural), as appropriate for the context.  This usage is consistent with Section 2.2 of {{RFC9153}}.
 
 ## Additional Abbreviations ## {#definitionsandabbr}
 
