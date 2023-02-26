@@ -425,7 +425,7 @@ This document outlines the DRIP architecture in the context of the UAS RID archi
 
 > * Privacy in UAS RID messages (PII protection) ({{privacyforbrid}}).
 >
-> This document should serve as a single point of entry into the set of IETF documents addressing the basic DRIP requirements.
+> This document should serve as a main point of entry into the set of IETF documents addressing the basic DRIP requirements.
 
 # Terms and Definitions #
 
