@@ -565,7 +565,7 @@ The severe constraints of Broadcast RID make it challenging to satisfy UAS RID r
 
 A combination of different DRIP Authentication Messages enables an Observer, without Internet connection (offline) or with (online), to validate a UAS DRIP ID in real-time.  Some messages must contain the relevant registration of the UA's DRIP ID in the claimed DIME.  Some messages must contain sender signatures over both static (e.g., registration) and dynamically changing (e.g., current UA location) data.  Combining these two sets of information, an Observer can piece together a chain of trust including real-time evidence to make a determination on the UA's claims.
 
-This process (combining the DRIP entity identifier, registries and authentication formats for Broadcast RID) can satisfy the following DRIP requirements defined in {{RFC9153}}: GEN-1, GEN-2, GEN-3, ID-2, ID-3, ID-4 and ID-5.
+This process (combining the DRIP entity identifier, registries, and authentication formats for Broadcast RID) can satisfy the following DRIP requirements defined in {{RFC9153}}: GEN-1, GEN-2, GEN-3, ID-2, ID-3, ID-4, and ID-5.
 
 # Harvesting Broadcast Remote ID messages for UTM Inclusion # {#harvestbridforutm}
 
