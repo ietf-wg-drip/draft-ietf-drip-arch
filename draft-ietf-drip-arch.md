@@ -473,7 +473,7 @@ Certificate:
 
 DRIP Identity Management Entity (DIME):
 
-> An entity that performs functions similar to a domain registrar/registry. A DIME vets Claims and/or Evidence from a registrant and delivers back Endorsements and/or Certificates in response. It is a high-level entity in the DRIP registration/provisioning process that can hold the role of HDA, RAA or root of trust (likely the HHIT prefix owner and/or DNS apex owner) for DETs.
+> An entity that performs functions similar to a domain registrar/registry. A DIME vets Claims and/or Evidence from a registrant and delivers back Endorsements and/or Certificates in response. It is a high-level entity in the DRIP registration/provisioning process that can hold the role of HDA, RAA, or root of trust (typically the HHIT prefix owner or DNS apex owner) for DETs.
 
 # HHIT as the DRIP Entity Identifier # {#rid}
 
