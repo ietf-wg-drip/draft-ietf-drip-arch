@@ -135,7 +135,7 @@ informative:
         org: European Union Aviation Safety Agency (EASA)
     target: https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32019R0947
     date: 2019
-  
+
   Implementing_update:
     title: EU COMMISSION IMPLEMENTING REGULATION (EU) 2021/664 of 22 April 2021 on a regulatory framework for the U-space
     author:
@@ -197,7 +197,7 @@ informative:
         org: European Organization for the Safety of Air Navigation (EUROCONTROL)
     target: https://www.sesarju.eu/sites/default/files/documents/u-space/CORUS%20ConOps%20vol2.pdf
     date: 2019
-  
+
   FAA_RID:
     title: Remote Identification of Unmanned Aircraft
     author:
@@ -518,7 +518,7 @@ In general, Internet access may be needed to validate Endorsements or Certificat
 ## HHIT for DRIP Identifier Registration and Lookup ## {#hhitregandlookup}
 
 UAS RID needs a deterministic lookup mechanism that rapidly provides actionable information about the identified UA.  Given the size constraints imposed by the Bluetooth 4 broadcast media, the UAS ID itself needs to be a non-spoofable inquiry input into the lookup.
- 
+
 A DRIP registration process based on the explicit hierarchy within a HHIT provides manageable uniqueness of the HI for the HHIT.  The hierarchy is defined in {{I-D.ietf-drip-rid}} and consists of 2-levels, a Registered Assigning Authority (RAA) and then a Hierarchical HIT Domain Authority (HDA). The registration within this hierarchy is the defense against a cryptographic hash second pre-image attack on the HHIT (e.g., multiple HIs yielding the same HHIT, see Requirement ID-3 in {{RFC9153}}). Registration first-come-first served is adequate.
 
 A lookup of the HHIT into the DIME provides the registered HI for HHIT proof of ownership and deterministic access to any other needed actionable information based on inquiry access authority (more details in {{privateinforeg}}).
