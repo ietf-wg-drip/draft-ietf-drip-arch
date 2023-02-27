@@ -637,7 +637,7 @@ Broadcast RID messages can contain Personally Identifiable Information (PII) suc
 
 ## Operation Concept ##
 
-The National Aeronautics and Space Administration (NASA) and FAA's effort to integrate UAS operations into the national airspace system (NAS) led to the development of the concept of UTM and the ecosystem around it.  The UTM concept was initially presented in 2013 and version 2.0 was published in 2020 {{FAA_UAS_Concept_Of_Ops}}. 
+The National Aeronautics and Space Administration (NASA) and FAA's effort to integrate UAS operations into the national airspace system (NAS) led to the development of the concept of UTM and the ecosystem around it.  The UTM concept was initially presented in 2013 and version 2.0 was published in 2020 {{FAA_UAS_Concept_Of_Ops}}.
 
 The eventual concept refinement, initial prototype implementation, and testing were conducted by the joint FAA and NASA UTM research transition team. World efforts took place afterward.  The Single European Sky ATM Research (SESAR) started the CORUS project to research its UTM counterpart concept, namely {{U-Space}}.  This effort is led by the European Organization for the Safety of Air Navigation (Eurocontrol).
 
@@ -678,4 +678,3 @@ Acknowledgments
 {: numbered="no"}
 
 The work of the FAA's UAS Identification and Tracking (UAS ID) Aviation Rulemaking Committee (ARC) is the foundation of later ASTM and IETF DRIP WG efforts.  The work of ASTM F38.02 in balancing the interests of diverse stakeholders is essential to the necessary rapid and widespread deployment of UAS RID. Thanks to Alexandre Petrescu, Stephan Wenger, Kyle Rose, Roni Even, Thomas Fossati, Valery Smyslov, Erik Kline, John Scudder, Murray Kucheraway, Robert Wilton, Roman Daniliw, Warren Kumari, Zaheduzzaman Sarker and Dave Thaler for the reviews and helpful positive comments. Thanks to Laura Welch for her assistance greatly improving this document. Thanks to Dave Thaler for showing our authors how to leverage the RATS model for attestation in DRIP. Thanks to chairs Daniel Migault and Mohamed Boucadair for direction of our team of authors and editor, some of whom are relative newcomers to writing IETF documents.  Thanks especially to Internet Area Director Eric Vyncke for guidance and support.
- 
