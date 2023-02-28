@@ -556,7 +556,7 @@ A DRIP private information registry supports essential registry operations (e.g.
 
 ### Alternative Private DRIP Registry Methods ###
 
-A DRIP private information registry might be an access-controlled DNS (e.g., via DNS over TLS) or a distributed ledger (blockchain).  Additionally, WebFinger {{RFC7033}} can be supported. These alternative methods may be used by Net-RID DP with specific customers.
+A DRIP private information registry might be an access-controlled DNS (e.g., via DNS over TLS).  Additionally, WebFinger {{RFC7033}} can be supported. These alternative methods may be used by Net-RID DP with specific customers.
 
 # DRIP Identifier Trust # {#driptrust}
 
