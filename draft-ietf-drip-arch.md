@@ -2,9 +2,10 @@
 title: Drone Remote Identification Protocol (DRIP) Architecture
 abbrev: DRIP Architecture
 docname: draft-ietf-drip-arch-latest
+date: 2023-02-27
 
 stand_alone: true
-
+stream: IETF
 ipr: trust200902
 area: INT
 wg: drip
@@ -491,7 +492,7 @@ The maximum ASTM UAS RID Authentication Message payload is 201 bytes each for Au
 
 ## HHIT as a Cryptographic Identifier ##
 
-The only (known to the authors at the time of this writing) existing types of IP address compatible identifiers cryptographically derived from the public keys of the identified entities are Cryptographically Generated Addresses (CGAs) {{RFC3972}} and Host Identity Tags (HITs) {{RFC7401}}.  CGAs and HITs lack registration/retrieval capability. To provide this, each HHIT embeds plaintext information designating the hierarchy within which it is registered and a cryptographic hash of that information concatenated with the entity's public key, etc. Although hash collisions may occur, the DIME can detect them and reject registration requests rather than issue credentials, e.g., by enforcing a first-claimed, first-attested policy. Pre-image hash attacks are also mitigated through this registration process, locking the HHIT to a specific HI.
+The only (known to the authors at the time of this writing) existing types of IP address compatible identifiers cryptographically derived from the public keys of the identified entities are Cryptographically Generated Addresses (CGAs) {{RFC3972}} and Host Identity Tags (HITs) {{RFC7401}}.  CGAs and HITs lack registration/retrieval capability. To provide this, each HHIT embeds plaintext information designating the hierarchy within which it is registered and a cryptographic hash of that information concatenated with the entity's public key, etc. Although hash collisions may occur, the DIME can detect them and reject registration requests rather than issue credentials, e.g., by enforcing a First Come First Served policy. Pre-image hash attacks are also mitigated through this registration process, locking the HHIT to a specific HI.
 
 ## HHIT as A Trustworthy DRIP Entity Identifier ## {#hhittrustworthy}
 
@@ -519,7 +520,7 @@ In general, Internet access may be needed to validate Endorsements or Certificat
 
 UAS RID needs a deterministic lookup mechanism that rapidly provides actionable information about the identified UA.  Given the size constraints imposed by the Bluetooth 4 broadcast media, the UAS ID itself needs to be a non-spoofable inquiry input into the lookup.
 
-A DRIP registration process based on the explicit hierarchy within a HHIT provides manageable uniqueness of the HI for the HHIT.  The hierarchy is defined in {{I-D.ietf-drip-rid}} and consists of 2-levels, a Registered Assigning Authority (RAA) and then a Hierarchical HIT Domain Authority (HDA). The registration within this hierarchy is the defense against a cryptographic hash second pre-image attack on the HHIT (e.g., multiple HIs yielding the same HHIT, see Requirement ID-3 in {{RFC9153}}). Registration first-come-first served is adequate.
+A DRIP registration process based on the explicit hierarchy within a HHIT provides manageable uniqueness of the HI for the HHIT.  The hierarchy is defined in {{I-D.ietf-drip-rid}} and consists of 2-levels, a Registered Assigning Authority (RAA) and then a Hierarchical HIT Domain Authority (HDA). The registration within this hierarchy is the defense against a cryptographic hash second pre-image attack on the HHIT (e.g., multiple HIs yielding the same HHIT, see Requirement ID-3 in {{RFC9153}}). The First Come First Served registration policy is adequate.
 
 A lookup of the HHIT into the DIME provides the registered HI for HHIT proof of ownership and deterministic access to any other needed actionable information based on inquiry access authority (more details in {{privateinforeg}}).
 
@@ -603,7 +604,7 @@ This approach satisfies DRIP requirement GEN-6 Contact, supports satisfaction of
 
 # Security Considerations # {#sc}
 
-The size of the public key hash in the HHIT is vulnerable to a second preimage attack. It is well within current server array technology to compute another key pair that hashes to the same HHIT (given the current ORCHID construction hash length to fit UAS RID and IPv6 address constraints). Thus, if a receiver were to check HHIT validity only by verifying that the received HI and associated information, when hashed in the ORCHID construction, reproduce the received HHIT, an adversary could impersonate a validly registered UA. To defend against this, online receivers should verify the received HHIT and received HI with the USS with which the HHIT purports to be registered. Online and offline receivers can use a chain of received DRIP link endorsements from a root of trust through the RAA and the HDA to the UA, e.g., as described in {{I-D.ietf-drip-auth}} and {{I-D.ietf-drip-registries}}.
+The size of the public key hash in the HHIT is vulnerable to a second preimage attack. It is well within current server array technology to compute another key pair that hashes to the same HHIT (given the current ORCHID construction hash length to fit UAS RID and IPv6 address constraints). Thus, if a receiver were to check HHIT/HI pair validity only by verifying that the received HI and associated information, when hashed in the ORCHID construction, reproduce the received HHIT, an adversary could impersonate a validly registered UA. To defend against this, online receivers should verify the received HHIT and received HI with the HDA (typically USS) with which the HHIT/HI pair purports to be registered. Online and offline receivers can use a chain of received DRIP link endorsements from a root of trust through the RAA and the HDA to the UA, e.g., as described in {{I-D.ietf-drip-auth}} and {{I-D.ietf-drip-registries}}.
 
 Compromise of a DIME private key could do widespread harm {{I-D.ietf-drip-registries}}. In particular, it would allow bad actors to impersonate trusted members of said DIME. These risks are in addition to those involving key management practices and will be addressed as part of the DIME process. All DRIP public keys can be found in DNS thus they can be revoked in DNS and users SHOULD check DNS when available. Specific key revocation procedures are as yet to be determined.
 
@@ -678,3 +679,4 @@ Acknowledgments
 {: numbered="no"}
 
 The work of the FAA's UAS Identification and Tracking (UAS ID) Aviation Rulemaking Committee (ARC) is the foundation of later ASTM and IETF DRIP WG efforts.  The work of ASTM F38.02 in balancing the interests of diverse stakeholders is essential to the necessary rapid and widespread deployment of UAS RID. Thanks to Alexandre Petrescu, Stephan Wenger, Kyle Rose, Roni Even, Thomas Fossati, Valery Smyslov, Erik Kline, John Scudder, Murray Kucheraway, Robert Wilton, Roman Daniliw, Warren Kumari, Zaheduzzaman Sarker and Dave Thaler for the reviews and helpful positive comments. Thanks to Laura Welch for her assistance greatly improving this document. Thanks to Dave Thaler for showing our authors how to leverage the RATS model for attestation in DRIP. Thanks to chairs Daniel Migault and Mohamed Boucadair for direction of our team of authors and editor, some of whom are relative newcomers to writing IETF documents.  Thanks especially to Internet Area Director Eric Vyncke for guidance and support.
+ 
